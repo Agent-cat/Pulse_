@@ -1,0 +1,20 @@
+
+.blood-donors-background {
+  position: relative; 
+  background-color: black;
+}
+
+.blood-donors-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/img/zot.png');
+  background-size: 800px; 
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.09; 
+  z-index: 0; 
+}
