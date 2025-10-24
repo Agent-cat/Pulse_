@@ -42,8 +42,8 @@ const EventButton = ({ onClick, children, className, disabled = false }) => (
 const ParticipantMeter = ({ current, limit }) => {
   const percentage = limit > 0 ? (current / limit) * 100 : 0;
   return (
-    <div className="w-full md:w-48">
-      <div className="flex justify-between items-center text-xs font-mono mb-1">
+    <div className="w-full">
+      <div className="flex justify-between items-center text-md font-robert-medium mb-1">
         <span className="text-gray-400">Participants</span>
         <span className="text-white font-bold">
           {current}/{limit}
@@ -59,11 +59,153 @@ const ParticipantMeter = ({ current, limit }) => {
   );
 };
 
+// Flip Card Component
+const FlipCard = ({
+  event,
+  category,
+  eventView,
+  onRegister,
+  onUnregister,
+  isRegistered,
+}) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <div
+      className="flip-card-container h-[29rem]"
+      onMouseEnter={() => setIsFlipped(true)}
+      onMouseLeave={() => setIsFlipped(false)}
+    >
+      <div className={`flip-card ${isFlipped ? "flipped" : ""}`}>
+        {/* Front Face */}
+        <div className="flip-card-front">
+          <div className="relative w-full h-full overflow-hidden rounded-2xl border border-gray-700 hover:border-green-400/70 transition-all duration-300">
+            <img
+              src={event.image}
+              alt={event.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+            {/* Participant count badge */}
+            <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-mono border border-gray-600">
+              {event.registeredStudents.length}/{event.participantLimit}
+            </div>
+
+            {/* Event title overlay */}
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              {/* <h3
+                className="text-2xl font-bold text-white special-font mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: formatSpecialTitle(event.title),
+                }}
+              ></h3> */}
+              {/* <p className="text-gray-300 text-sm opacity-90">
+                Hover to see details
+              </p> */}
+            </div>
+          </div>
+        </div>
+
+        {/* Back Face */}
+        <div className="flip-card-back">
+          <div className="bg-gray-900 rounded-2xl overflow-hidden border border-gray-700 hover:border-green-400/70 transition-all duration-300 h-full flex flex-col">
+            <div className="p-6 flex-grow  backdrop:blur-xl flex flex-col">
+              <h3
+                className="text-xl font-bold text-white mb-4 special-font"
+                dangerouslySetInnerHTML={{
+                  __html: formatSpecialTitle(event.title),
+                }}
+              ></h3>
+
+              <div className="flex-grow space-y-4">
+                <p className="text-gray-300 font-bold text-md leading-relaxed line-clamp-4">
+                  {event.details.description}
+                </p>
+
+                <div className="space-y-3 text-md text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <Icon
+                      path="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
+                      className="w-4 h-4 text-green-400 flex-shrink-0"
+                    />
+                    <span className="truncate">{event.details.venue}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon
+                      path="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18"
+                      className="w-4 h-4 text-green-400 flex-shrink-0"
+                    />
+                    <span className="text-md">
+                      {new Date(event.details.date).toLocaleDateString(
+                        "en-US",
+                        {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        }
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon
+                      path="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                      className="w-4 h-4 text-green-400 flex-shrink-0"
+                    />
+                    <span className="text-md">
+                      {event.details.startTime} - {event.details.endTime}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <ParticipantMeter
+                    current={event.registeredStudents.length}
+                    limit={event.participantLimit}
+                  />
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="mt-4">
+                {eventView === "current" ? (
+                  isRegistered ? (
+                    <EventButton
+                      onClick={() => onUnregister(category, event)}
+                      className="w-full bg-red-600 text-white hover:bg-red-500 focus:ring-red-400"
+                    >
+                      Unregister
+                    </EventButton>
+                  ) : event.registeredStudents.length >=
+                    event.participantLimit ? (
+                    <EventButton
+                      disabled
+                      className="w-full bg-gray-700 text-gray-400 cursor-not-allowed"
+                    >
+                      Event Full
+                    </EventButton>
+                  ) : (
+                    <EventButton
+                      onClick={() => onRegister(category, event)}
+                      className="w-full bg-green-500 text-black hover:bg-green-400 focus:ring-green-400"
+                    >
+                      Register Now
+                    </EventButton>
+                  )
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Events = () => {
   const url = import.meta.env.VITE_API_URL;
   const [events, setEvents] = useState([]);
   const [eventView, setEventView] = useState("current");
-  const [expandedEvent, setExpandedEvent] = useState(null);
   const [showRegisterPopup, setShowRegisterPopup] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -172,9 +314,6 @@ const Events = () => {
   const displayedEvents = eventView === "current" ? currentEvents : pastEvents;
 
   // Event Handlers
-  const handleToggleEvent = (eventId) =>
-    setExpandedEvent(expandedEvent === eventId ? null : eventId);
-
   const handleRegisterClick = (category, event) => {
     if (eventView === "past") {
       setFormError("You cannot register for past events.");
@@ -349,239 +488,160 @@ const Events = () => {
   );
 
   return (
-    <div
-      ref={container}
-      className="min-h-screen bg-black blood-donors-background text-gray-200 font-sans overflow-x-hidden"
-    >
-      <div className="absolute top-36 right-4 z-10 animate-in">
-        <button
-          onClick={() => navigate("/registered-events")}
-          className="px-4 py-2 bg-gray-800  text-gray-300 rounded-full text-sm font-medium border border-gray-700 hover:bg-gray-700 hover:text-white transition-colors duration-300"
-        >
-          My Events
-        </button>
-      </div>
+    <>
+      <style jsx>{`
+        .flip-card-container {
+          perspective: 1000px;
+        }
 
-      {/* Hero Section */}
-      <div className="flex justify-center items-center pt-24 pb-12 sm:pt-32 sm:pb-16 animate-in">
-        <h1
-          className="text-5xl md:text-7xl font-bold text-white special-font"
-          dangerouslySetInnerHTML={{ __html: formatSpecialTitle("EVENTS") }}
-        ></h1>
-      </div>
+        .flip-card {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          transform-style: preserve-3d;
+        }
 
-      {/* Toggle Section */}
-      <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="flex justify-center mb-12 animate-in">
-        <div className="flex rounded-full bg-gray-900 border border-gray-700 p-1">
+        .flip-card.flipped {
+          transform: rotateY(180deg);
+        }
+
+        .flip-card-front,
+        .flip-card-back {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          backface-visibility: hidden;
+          border-radius: 1rem;
+          overflow: hidden;
+        }
+
+        .flip-card-front {
+          transform: rotateY(0deg);
+        }
+
+        .flip-card-back {
+          transform: rotateY(180deg);
+        }
+
+        .line-clamp-4 {
+          display: -webkit-box;
+          -webkit-line-clamp: 4;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      `}</style>
+
+      <div
+        ref={container}
+        className="min-h-screen bg-black blood-donors-background text-gray-200 font-sans overflow-x-hidden"
+      >
+        <div className="absolute top-36 right-4 z-10 animate-in">
           <button
-            onClick={() => setEventView("current")}
-            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-              eventView === "current"
-                ? "bg-green-500 text-black shadow-lg shadow-green-500/25"
-                : "text-gray-400 hover:text-white hover:bg-gray-800"
-            }`}
+            onClick={() => navigate("/registered-events")}
+            className="px-4 py-2 bg-gray-800  text-gray-300 rounded-full text-sm font-medium border border-gray-700 hover:bg-gray-700 hover:text-white transition-colors duration-300"
           >
-            Current Events
-          </button>
-          <button
-            onClick={() => setEventView("past")}
-            className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-              eventView === "past"
-                ? "bg-green-500 text-black shadow-lg shadow-green-500/25"
-                : "text-gray-400 hover:text-white hover:bg-gray-800"
-            }`}
-          >
-            Past Events
+            My Events
           </button>
         </div>
-      </div>
 
-      <main className="max-w-6xl mx-auto px-4">
-        {apiError ? (
-          <div className="text-red-400 text-center p-8 bg-gray-900 rounded-lg animate-in border border-gray-700">
-            {apiError}
+        {/* Hero Section */}
+        <div className="flex justify-center items-center pt-24 pb-12 sm:pt-32 sm:pb-16 animate-in">
+          <h1
+            className="text-5xl md:text-7xl font-bold text-white special-font"
+            dangerouslySetInnerHTML={{ __html: formatSpecialTitle("EVENTS") }}
+          ></h1>
+        </div>
+
+        {/* Toggle Section */}
+        <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="flex justify-center mb-12 animate-in">
+          <div className="flex rounded-full bg-gray-900 border border-gray-700 p-1">
+            <button
+              onClick={() => setEventView("current")}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                eventView === "current"
+                  ? "bg-green-500 text-black shadow-lg shadow-green-500/25"
+                  : "text-gray-400 hover:text-white hover:bg-gray-800"
+              }`}
+            >
+              Current Events
+            </button>
+            <button
+              onClick={() => setEventView("past")}
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                eventView === "past"
+                  ? "bg-green-500 text-black shadow-lg shadow-green-500/25"
+                  : "text-gray-400 hover:text-white hover:bg-gray-800"
+              }`}
+            >
+              Past Events
+            </button>
           </div>
-        ) : displayedEvents.length > 0 ? (
-          displayedEvents.map((category, categoryIndex) => (
-            <div key={category._id}>
-              {categoryIndex > 0 && (
-                <hr className="w-1/2 mx-auto border-t-0 bg-gradient-to-r from-transparent via-green-500/30 to-transparent h-[1px] my-16" />
-              )}
-              <div className="mb-16 animate-in">
-                <div className="mb-8">
-                  <h2
-                    className="text-3xl md:text-4xl font-bold text-green-400 special-font text-center"
-                    dangerouslySetInnerHTML={{
-                      __html: formatSpecialTitle(category.categoryName),
-                    }}
-                  />
-                </div>
+        </div>
 
-                {/* Card Grid Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {category.Events?.map((event) => (
-                    <div
-                      key={event._id}
-                      className="group bg-gray-900 rounded-2xl overflow-hidden border border-gray-700 hover:border-green-400/70 transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/10 h-full flex flex-col hover:scale-[1.02] transform-gpu"
-                    >
-                      {/* Event Image */}
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={event.image}
-                          alt={event.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-mono">
-                          {event.registeredStudents.length}/
-                          {event.participantLimit}
-                        </div>
-                      </div>
+        <main className="max-w-6xl mx-auto px-4">
+          {apiError ? (
+            <div className="text-red-400 text-center p-8 bg-gray-900 rounded-lg animate-in border border-gray-700">
+              {apiError}
+            </div>
+          ) : displayedEvents.length > 0 ? (
+            displayedEvents.map((category, categoryIndex) => (
+              <div key={category._id}>
+                {categoryIndex > 0 && (
+                  <hr className="w-1/2 mx-auto border-t-0 bg-gradient-to-r from-transparent via-green-500/30 to-transparent h-[1px] my-16" />
+                )}
+                <div className="mb-16 animate-in">
+                  <div className="mb-8">
+                    <h2
+                      className="text-3xl md:text-4xl font-bold text-green-400 special-font text-center"
+                      dangerouslySetInnerHTML={{
+                        __html: formatSpecialTitle(category.categoryName),
+                      }}
+                    />
+                  </div>
 
-                      {/* Card Content */}
-                      <div className="p-6 flex-grow flex flex-col">
-                        <div className="flex-grow">
-                          <h3
-                            className="text-xl font-bold text-white mb-3 special-font"
-                            dangerouslySetInnerHTML={{
-                              __html: formatSpecialTitle(event.title),
-                            }}
-                          ></h3>
-
-                          <div
-                            className={`transition-all duration-500 ease-in-out ${
-                              expandedEvent === event._id
-                                ? "opacity-100 max-h-96"
-                                : "opacity-100 max-h-20 overflow-hidden"
-                            }`}
-                          >
-                            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                              {event.details.description}
-                            </p>
-
-                            {expandedEvent === event._id && (
-                              <div className="space-y-3 text-sm text-gray-400 mb-4">
-                                <div className="flex items-center gap-2">
-                                  <Icon
-                                    path="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"
-                                    className="w-4 h-4 text-green-400"
-                                  />
-                                  <span>{event.details.venue}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Icon
-                                    path="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18"
-                                    className="w-4 h-4 text-green-400"
-                                  />
-                                  <span>
-                                    {new Date(
-                                      event.details.date
-                                    ).toLocaleDateString("en-US", {
-                                      weekday: "long",
-                                      year: "numeric",
-                                      month: "long",
-                                      day: "numeric",
-                                    })}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Icon
-                                    path="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    className="w-4 h-4 text-green-400"
-                                  />
-                                  <span>
-                                    {event.details.startTime} -{" "}
-                                    {event.details.endTime}
-                                  </span>
-                                </div>
-                                <div className="mt-4">
-                                  <ParticipantMeter
-                                    current={event.registeredStudents.length}
-                                    limit={event.participantLimit}
-                                  />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Card Actions */}
-                        <div className="flex flex-col gap-3 mt-auto">
-                          <button
-                            onClick={() => handleToggleEvent(event._id)}
-                            className="text-green-400 text-sm font-medium hover:text-green-300 transition-colors duration-200 flex items-center justify-center gap-2"
-                          >
-                            {expandedEvent === event._id
-                              ? "Show Less"
-                              : "Show More"}
-                            <Icon
-                              path="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                              className={`w-4 h-4 transition-transform duration-300 ${
-                                expandedEvent === event._id ? "rotate-180" : ""
-                              }`}
-                            />
-                          </button>
-
-                          {eventView === "current" ? (
-                            event.registeredStudents.includes(
-                              localStorage.getItem("userId")
-                            ) ? (
-                              <EventButton
-                                onClick={() =>
-                                  handleUnregisterClick(category, event)
-                                }
-                                className="w-full bg-red-600 text-white hover:bg-red-500 focus:ring-red-400"
-                              >
-                                Unregister
-                              </EventButton>
-                            ) : event.registeredStudents.length >=
-                              event.participantLimit ? (
-                              <EventButton
-                                disabled
-                                className="w-full bg-gray-700 text-gray-400 cursor-not-allowed"
-                              >
-                                Event Full
-                              </EventButton>
-                            ) : (
-                              <EventButton
-                                onClick={() =>
-                                  handleRegisterClick(category, event)
-                                }
-                                className="w-full bg-green-500 text-black hover:bg-green-400 focus:ring-green-400"
-                              >
-                                Register Now
-                              </EventButton>
-                            )
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                  {/* Flip Card Grid Layout */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {category.Events?.map((event) => (
+                      <FlipCard
+                        key={event._id}
+                        event={event}
+                        category={category}
+                        eventView={eventView}
+                        onRegister={handleRegisterClick}
+                        onUnregister={handleUnregisterClick}
+                        isRegistered={event.registeredStudents.includes(
+                          localStorage.getItem("userId")
+                        )}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="text-center py-16 animate-in">
+              <h3
+                className="text-2xl font-bold text-gray-400 special-font"
+                dangerouslySetInnerHTML={{
+                  __html: formatSpecialTitle("No Events Found"),
+                }}
+              ></h3>
+              <p className="text-gray-500 mt-2">
+                {eventView === "current"
+                  ? "No current events available."
+                  : "No past events to display."}
+              </p>
             </div>
-          ))
-        ) : (
-          <div className="text-center py-16 animate-in">
-            <h3
-              className="text-2xl font-bold text-gray-400 special-font"
-              dangerouslySetInnerHTML={{
-                __html: formatSpecialTitle("No Events Found"),
-              }}
-            ></h3>
-            <p className="text-gray-500 mt-2">
-              {eventView === "current"
-                ? "No current events available."
-                : "No past events to display."}
-            </p>
-          </div>
-        )}
-      </main>
+          )}
+        </main>
 
-      {showRegisterPopup && <RegisterPopup />}
-      {showSuccessPopup.show && <SuccessPopup />}
-    </div>
+        {showRegisterPopup && <RegisterPopup />}
+        {showSuccessPopup.show && <SuccessPopup />}
+      </div>
+    </>
   );
 };
 

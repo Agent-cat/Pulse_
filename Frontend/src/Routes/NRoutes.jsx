@@ -19,6 +19,7 @@ import ForgotPassword from "../Components/ForgotPassword";
 import UserDetails from "../Pages/UserDetails";
 import Team from "../Pages/Team";
 import Faculty from "../Pages/Faculty";
+import Zrotriya from "../Pages/Zrotriya";
 
 const NRoutes = () => {
   const user = getUser();
@@ -34,6 +35,7 @@ const NRoutes = () => {
       <Route path="/alumini" element={<Alumini />} />
       <Route path="/team" element={<Team />} />
       <Route path="/faculty" element={<Faculty />} />
+      <Route path="/zrotriya" element={<Zrotriya />} />
 
       <Route
         path="/login"

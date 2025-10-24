@@ -10,7 +10,7 @@ const Register = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: "",
-    email: "2300031042@kluniversity.in",
+    email: "",
     password: "",
     confirmPassword: "",
     phoneNumber: "",
@@ -20,7 +20,7 @@ const Register = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isEmailVerified, setIsEmailVerified] = useState(true);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [showOTPInput, setShowOTPInput] = useState(false);
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState("");
@@ -253,11 +253,10 @@ const Register = () => {
                   type="button"
                   onClick={handleSendOTP}
                   disabled={isLoading || !formData.email || isEmailVerified}
-                  className={`px-4 py-2 text-sm rounded bg-white/20 text-white hover:bg-white/30 transition-colors font-mono ${
-                    isLoading || !formData.email || isEmailVerified
-                      ? "opacity-50 cursor-not-allowed"
-                      : ""
-                  }`}
+                  className={`px-4 py-2 text-sm rounded bg-white/20 text-white hover:bg-white/30 transition-colors font-mono ${isLoading || !formData.email || isEmailVerified
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                    }`}
                 >
                   {isLoading ? "Sending..." : "Verify Email"}
                 </button>
@@ -287,11 +286,10 @@ const Register = () => {
                     type="button"
                     onClick={handleVerifyOTP}
                     disabled={isLoading || otp.length !== 6}
-                    className={`px-4 py-2 rounded bg-white/20 text-white hover:bg-white/30 transition-colors font-mono ${
-                      isLoading || otp.length !== 6
-                        ? "opacity-50 cursor-not-allowed"
-                        : ""
-                    }`}
+                    className={`px-4 py-2 rounded bg-white/20 text-white hover:bg-white/30 transition-colors font-mono ${isLoading || otp.length !== 6
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                      }`}
                   >
                     {isLoading ? "Verifying..." : "Verify"}
                   </button>
@@ -373,10 +371,9 @@ const Register = () => {
                 htmlFor="bloodGroup"
                 className="block text-white mb-2 font-mono"
               >
-                BlooodGroup <b className="text-rose-500">*</b>
+                Blood Group <b className="text-rose-500">*</b>
               </label>
-              <input
-                type="text"
+              <select
                 id="bloodGroup"
                 name="bloodGroup"
                 value={formData.bloodGroup}
@@ -384,7 +381,17 @@ const Register = () => {
                 className="w-full px-4 py-2 rounded bg-black border border-white/20 text-white focus:outline-none focus:border-white transition-all duration-300"
                 required
                 disabled={isLoading}
-              />
+              >
+                <option value="">Select Blood Type</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
             </div>
 
             <div>
@@ -413,9 +420,8 @@ const Register = () => {
               disabled={isLoading}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className={`w-full bg-white text-black py-3 rounded font-mono font-bold hover:bg-white/90 transition-all duration-300 ${
-                isLoading ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`w-full bg-white text-black py-3 rounded font-mono font-bold hover:bg-white/90 transition-all duration-300 ${isLoading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               {isLoading ? "Creating Account..." : "Create Account"}
             </motion.button>
