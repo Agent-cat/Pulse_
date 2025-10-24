@@ -95,9 +95,7 @@ const Blood = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {user.email}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {user.phoneNumber}
-                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">number</td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {user.bloodGroup}
                       </td>

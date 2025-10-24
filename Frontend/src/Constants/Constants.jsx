@@ -32,6 +32,10 @@ export const NavItems = [
     title: "Faculty",
     to: "/faculty",
   },
+  {
+    title: "Zrotriya",
+    to: "/zrotriya",
+  },
 ];
 
 export const adminNavItems = {

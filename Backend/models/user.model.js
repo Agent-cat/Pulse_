@@ -52,6 +52,7 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+   
     bloodGroup:{
       type:String,
       require:true
