@@ -769,7 +769,6 @@ const Faculty = () => {
                   animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
                 }}
               >
-                {/* Animated background glow */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-green-400/20 to-emerald-400/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
 
                 {/* Main card */}
@@ -781,7 +780,7 @@ const Faculty = () => {
                     {/* Header */}
                     <div className="mb-6">
                       <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-2xl font-bold text-white group-hover:text-green-300 transition-colors duration-300">
+                        <h3 className="text-2xl font-bold text-white group-hover:text-green-300 font-circular-web transition-colors duration-300">
                           {faculty["Name of the Faculty"]}
                         </h3>
                       </div>

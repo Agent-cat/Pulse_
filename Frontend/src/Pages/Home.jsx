@@ -2,7 +2,7 @@ import Prism from "../Components/Prism";
 
 const Home = () => {
   return (
-    <div className="w-full h-screen bg-black blood-donors-background text-white">
+    <div className="w-full h-screen bg-black text-white">
       <Prism
         animationType="rotate"
         timeScale={0.5}
