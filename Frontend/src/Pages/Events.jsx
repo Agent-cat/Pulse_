@@ -537,30 +537,30 @@ const Events = () => {
         ref={container}
         className="min-h-screen bg-black blood-donors-background text-gray-200 font-sans overflow-x-hidden"
       >
-        <div className="absolute top-36 right-4 z-10 animate-in">
+        <div className="absolute top-24 sm:top-28 md:top-36 right-2 sm:right-4 z-10 animate-in">
           <button
             onClick={() => navigate("/registered-events")}
-            className="px-4 py-2 bg-gray-800  text-gray-300 rounded-full text-sm font-medium border border-gray-700 hover:bg-gray-700 hover:text-white transition-colors duration-300"
+            className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-800 text-gray-300 rounded-full text-xs sm:text-sm font-medium border border-gray-700 hover:bg-gray-700 hover:text-white transition-colors duration-300"
           >
             My Events
           </button>
         </div>
 
         {/* Hero Section */}
-        <div className="flex justify-center items-center pt-24 pb-12 sm:pt-32 sm:pb-16 animate-in">
+        <div className="flex justify-center items-center pt-20 pb-8 sm:pt-24 sm:pb-12 md:pt-32 md:pb-16 animate-in px-4">
           <h1
-            className="text-5xl md:text-7xl font-bold text-white special-font"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white special-font"
             dangerouslySetInnerHTML={{ __html: formatSpecialTitle("EVENTS") }}
           ></h1>
         </div>
 
         {/* Toggle Section */}
         <div className="absolute top-[10%] left-[5%] w-64 h-64 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-        <div className="flex justify-center mb-12 animate-in">
+        <div className="flex justify-center mb-8 sm:mb-10 md:mb-12 animate-in px-4">
           <div className="flex rounded-full bg-gray-900 border border-gray-700 p-1">
             <button
               onClick={() => setEventView("current")}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 ${
                 eventView === "current"
                   ? "bg-green-500 text-black shadow-lg shadow-green-500/25"
                   : "text-gray-400 hover:text-white hover:bg-gray-800"
@@ -570,7 +570,7 @@ const Events = () => {
             </button>
             <button
               onClick={() => setEventView("past")}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 ${
                 eventView === "past"
                   ? "bg-green-500 text-black shadow-lg shadow-green-500/25"
                   : "text-gray-400 hover:text-white hover:bg-gray-800"
@@ -581,7 +581,7 @@ const Events = () => {
           </div>
         </div>
 
-        <main className="max-w-6xl mx-auto px-4">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {apiError ? (
             <div className="text-red-400 text-center p-8 bg-gray-900 rounded-lg animate-in border border-gray-700">
               {apiError}
@@ -603,7 +603,7 @@ const Events = () => {
                   </div>
 
                   {/* Flip Card Grid Layout */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                     {category.Events?.map((event) => (
                       <FlipCard
                         key={event._id}
