@@ -26,7 +26,7 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
       </button>
 
       {isProfileOpen && (
-        <div className="absolute right-0 z-50 mt-3 w-72 rounded-xl border border-white/10 bg-black/80 py-2 shadow-2xl backdrop-blur-lg">
+        <div className="absolute right-0 z-50 mt-3 w-72 rounded-xl border border-white/10 bg-black py-2 shadow-2xl ">
           <div className="border-b border-white/10 px-6 py-4">
             <p className="text-lg font-semibold text-white">{user?.fullName}</p>
             <p className="text-sm text-gray-300">{user?.email}</p>
@@ -205,13 +205,13 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
                   <div className="flex gap-4">
                     <NavLink
                       to="/login"
-                      className="cursor-target rounded-md bg-white px-6 py-2 font-bold text-black transition-colors hover:bg-gray-200"
+                      className="cursor-target rounded-md bg-green-600/95 px-6 py-2 font-bold text-black transition-colors hover:bg-green-700"
                     >
                       Login
                     </NavLink>
                     <NavLink
                       to="/register"
-                      className="cursor-target rounded-md border-2 border-white bg-transparent mr-4 px-6 py-2 font-bold text-white transition-all hover:text-red-500"
+                      className="cursor-target rounded-md border-2 border-green-600 bg-transparent mr-4 px-6 py-2 font-bold text-white transition-all hover:text-red-500"
                     >
                       Register
                     </NavLink>
@@ -225,19 +225,16 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
               >
                 <div className="relative flex h-4 w-5 flex-col justify-between">
                   <span
-                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${
-                      isOpen ? "w-5 translate-y-1.5 rotate-45" : "w-5"
-                    }`}
+                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${isOpen ? "w-5 translate-y-1.5 rotate-45" : "w-5"
+                      }`}
                   ></span>
                   <span
-                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${
-                      isOpen ? "w-5 opacity-0" : "ml-1 w-4"
-                    }`}
+                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${isOpen ? "w-5 opacity-0" : "ml-1 w-4"
+                      }`}
                   ></span>
                   <span
-                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${
-                      isOpen ? "w-5 -translate-y-1.5 -rotate-45" : "ml-2 w-3"
-                    }`}
+                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${isOpen ? "w-5 -translate-y-1.5 -rotate-45" : "ml-2 w-3"
+                      }`}
                   ></span>
                 </div>
               </button>
@@ -248,7 +245,7 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
 
       <div
         className={clsx(
-          "fixed inset-0 right-0 top-0 z-40 h-full w-full transform backdrop-blur-xl transition-all duration-500 ease-in-out lg:hidden",
+          "fixed inset-0 bg-black right-0 top-0 z-40 h-full w-full transform  transition-all duration-500 ease-in-out lg:hidden",
           {
             "translate-x-0 opacity-100": isOpen,
             "translate-x-full opacity-0": !isOpen,
@@ -288,14 +285,14 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
                 <NavLink
                   to="/login"
                   onClick={() => setIsOpen(false)}
-                  className="cursor-target rounded-xl bg-white px-6 py-3 text-center text-lg font-medium text-black transition-all hover:bg-gray-200"
+                  className="cursor-target rounded-xl bg-green-500 px-6 py-3 text-center text-lg font-medium text-black transition-all hover:bg-gray-200"
                 >
                   Login
                 </NavLink>
                 <NavLink
                   to="/register"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-xl border-2 border-white bg-transparent px-6 py-3 text-center text-lg font-medium text-white transition-all hover:bg-white hover:text-black"
+                  className="rounded-xl border-2 border-green-500 bg-transparent px-6 py-3 text-center text-lg font-medium text-white transition-all hover:bg-white hover:text-black"
                 >
                   Register
                 </NavLink>
