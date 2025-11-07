@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Alumini2024, Alumini2023, Alumini2022 } from "../Constants/team";
-import { FaLinkedin, FaInstagram, FaEnvelope, FaPhone } from "react-icons/fa";
 import ProfileCard from "../Components/ProfileCard";
 
 const Alumini = () => {
@@ -16,9 +15,16 @@ const Alumini = () => {
   return (
     <div className="w-full min-h-screen blood-donors-background bg-black text-white py-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-5xl font-extrabold text-center mb-8 tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">
-          Alumni Gallery
-        </h1>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
+            <span className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 bg-clip-text text-transparent">
+              Alumni Gallery
+            </span>
+          </h1>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            Meet our distinguished alumni who have made their mark
+          </p>
+        </div>
 
         {/* Year Selection Buttons */}
         <div className="flex justify-center mb-12 space-x-4">
@@ -56,8 +62,9 @@ const Alumini = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10">
-          {alumniData[activeYear].map((member, index) => (
+          {alumniData[activeYear].map((member) => (
             <ProfileCard
+              key={member.name}
               title={member.role}
               handle={member.name}
               contactText="Contact Me"
@@ -65,7 +72,7 @@ const Alumini = () => {
               showUserInfo={true}
               enableTilt={true}
               enableMobileTilt={false}
-              onContactClick={() => console.log("Contact clicked")}
+              onContactClick={() => {}}
             />
           ))}
         </div>

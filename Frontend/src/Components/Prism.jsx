@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Renderer, Triangle, Program, Mesh } from "ogl";
 
+/* eslint-disable react/prop-types */
 const Prism = ({
   height = 3.5,
   baseWidth = 5.5,
@@ -24,6 +25,13 @@ const Prism = ({
     const container = containerRef.current;
     if (!container) return;
 
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      // Skip heavy animations if user prefers reduced motion
+      return;
+    }
+
     const H = Math.max(0.001, height);
     const BW = Math.max(0.001, baseWidth);
     const BASE_HALF = BW * 0.5;
@@ -43,7 +51,8 @@ const Prism = ({
     const HOVSTR = Math.max(0, hoverStrength || 1);
     const INERT = Math.max(0, Math.min(1, inertia || 0.12));
 
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    // Reduce DPR for better performance
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
     const renderer = new Renderer({
       dpr,
       alpha: transparent,
@@ -171,29 +180,27 @@ const Prism = ({
 
         o = tanh4(o * o * (uGlow * uBloom) / 1e5);
 
-    // keep your glowing effect
-vec3 col = o.rgb;
+        // keep your glowing effect
+        vec3 col = o.rgb;
 
-// add some noise
-float n = rand(gl_FragCoord.xy + vec2(iTime));
-col += (n - 0.5) * uNoise;
-col = clamp(col, 0.0, 1.0);
+        // add some noise
+        float n = rand(gl_FragCoord.xy + vec2(iTime));
+        col += (n - 0.5) * uNoise;
+        col = clamp(col, 0.0, 1.0);
 
-// now mix it into a green–black–silver palette
-vec3 green  = vec3(0.0, 1.0, 0.0);
-vec3 silver = vec3(0.75, 0.75, 0.75);
-vec3 black  = vec3(0.0, 0.0, 0.0);
+        // now mix it into a green–black–silver palette
+        vec3 green  = vec3(0.0, 1.0, 0.0);
+        vec3 silver = vec3(0.75, 0.75, 0.75);
+        vec3 black  = vec3(0.0, 0.0, 0.0);
 
-// blend green with silver
-vec3 tinted = mix(green, silver, 0.4); // 40% silver tint
-// then blend with black depending on brightness
-float brightness = dot(col, vec3(0.299, 0.587, 0.114));
-col = mix(black, tinted, brightness);
+        // blend green with silver
+        vec3 tinted = mix(green, silver, 0.4); // 40% silver tint
+        // then blend with black depending on brightness
+        float brightness = dot(col, vec3(0.299, 0.587, 0.114));
+        col = mix(black, tinted, brightness);
 
-// optional: saturation
-col = clamp(col * uSaturation, 0.0, 1.0);
-
-gl_FragColor = vec4(col, o.a);
+        // optional: saturation
+        col = clamp(col * uSaturation, 0.0, 1.0);
 
         gl_FragColor = vec4(col, o.a);
       }
@@ -458,5 +465,6 @@ gl_FragColor = vec4(col, o.a);
 
   return <div className="w-full h-full relative" ref={containerRef} />;
 };
+/* eslint-enable react/prop-types */
 
 export default Prism;

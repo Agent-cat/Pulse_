@@ -6,7 +6,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { NavItems, adminNavItems } from "../Constants/Constants";
 import { getUser, removeToken, removeUser } from "../utils/auth";
 
-const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
+const Navbar = () => {
   const [user, setUser] = useState(getUser());
   const [isOpen, setIsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -17,31 +17,39 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
     <div className="relative" ref={profileRef}>
       <button
         onClick={() => setIsProfileOpen(!isProfileOpen)}
-        className="flex items-center gap-2 text-white hover:text-gray-200 transition-colors"
+        className="flex items-center gap-3 px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 group"
       >
-        <div className="h-10 w-10 rounded-full font-bold text-white">
+        <div className="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center font-bold text-black shadow-lg">
           {user?.fullName?.charAt(0)?.toUpperCase() || "?"}
         </div>
-        <span className="font-medium">{user?.fullName || "User"}</span>
+        <span className="font-medium text-white group-hover:text-emerald-300 transition-colors hidden xl:block">{user?.fullName || "User"}</span>
+        <svg className={`w-4 h-4 text-emerald-400 transition-transform duration-300 hidden xl:block ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
       </button>
 
       {isProfileOpen && (
-        <div className="absolute right-0 z-50 mt-3 w-72 rounded-xl border border-white/10 bg-black py-2 shadow-2xl ">
-          <div className="border-b border-white/10 px-6 py-4">
-            <p className="text-lg font-semibold text-white">{user?.fullName}</p>
-            <p className="text-sm text-gray-300">{user?.email}</p>
-          </div>
-          <div className="border-b border-white/10 px-6 py-4">
-            <p className="mt-2 flex justify-between text-sm text-gray-300">
-              <span>ID:</span>
-              <span className="text-white">{user?.collegeId}</span>
-            </p>
+        <div className="absolute right-0 z-50 mt-3 w-72 rounded-2xl border border-emerald-500/30 bg-black/95 backdrop-blur-xl shadow-2xl shadow-emerald-500/10 overflow-hidden">
+          <div className="bg-gradient-to-br from-emerald-500/10 to-green-500/5 border-b border-emerald-500/20 px-6 py-5">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-400 to-green-500 flex items-center justify-center font-bold text-black shadow-lg">
+                {user?.fullName?.charAt(0)?.toUpperCase() || "?"}
+              </div>
+              <div>
+                <p className="text-lg font-semibold text-white">{user?.fullName}</p>
+                <p className="text-xs text-emerald-400">{user?.collegeId}</p>
+              </div>
+            </div>
+            <p className="text-sm text-gray-400 truncate">{user?.email}</p>
           </div>
           <div className="px-4 py-3">
             <button
               onClick={handleLogout}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-black py-2.5 font-medium text-white transition-all duration-300 hover:bg-white hover:text-black"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 py-3 font-semibold text-black transition-all duration-300 hover:from-emerald-400 hover:to-green-400 hover:shadow-lg hover:shadow-emerald-500/50"
             >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
               <span>Logout</span>
             </button>
           </div>
@@ -51,22 +59,26 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
   );
 
   const MobileProfile = () => (
-    <div className="mt-6 border-t border-white/10 pt-6">
-      <div className="mb-6 flex items-center gap-4">
-        <div className="flex h-12 w-12 items-center justify-center rounded-full font-bold text-white shadow-lg">
+    <div className="mt-6 border-t border-emerald-500/30 pt-6">
+      <div className="mb-6 flex items-center gap-4 p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-green-500 font-bold text-black shadow-lg">
           {user?.fullName?.charAt(0)?.toUpperCase() || "?"}
         </div>
-        <div>
+        <div className="flex-1">
           <p className="text-lg font-semibold text-white">
             {user?.fullName || "User"}
           </p>
-          <p className="text-sm text-gray-300">{user?.email}</p>
+          <p className="text-sm text-emerald-400">{user?.collegeId}</p>
+          <p className="text-xs text-gray-400 truncate">{user?.email}</p>
         </div>
       </div>
       <button
         onClick={handleLogout}
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-black py-3 font-medium text-white transition-all duration-300 hover:bg-white hover:text-black"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 py-4 font-semibold text-black transition-all duration-300 hover:from-emerald-400 hover:to-green-400 shadow-lg shadow-emerald-500/50"
       >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
         <span>Logout</span>
       </button>
     </div>
@@ -118,29 +130,19 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
-  // Function to toggle the audio state
-  const toggleAudioIndicator = () => {
-    if (audioElementRef.current) {
-      const newAudioState = !isAudioPlaying;
-      setIsAudioPlaying(newAudioState);
-      localStorage.setItem(
-        "audio_preference",
-        newAudioState ? "enabled" : "disabled"
-      );
-    }
-  };
-
   useEffect(() => {
     if (currentScrollY <= 10) {
       setIsNavVisible(true);
       if (navContainerRef.current) {
         navContainerRef.current.classList.remove("floating-nav");
+        navContainerRef.current.classList.add("top-nav");
       }
       setLastScrollY(0);
       return;
     }
     if (navContainerRef.current) {
       navContainerRef.current.classList.add("floating-nav");
+      navContainerRef.current.classList.remove("top-nav");
     }
     if (currentScrollY > lastScrollY) {
       setIsNavVisible(false);
@@ -162,90 +164,94 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
     <div className="overflow-x-hidden">
       <div
         ref={navContainerRef}
-        className="fixed inset-x-0 top-4 z-50 h-16 transition-all duration-700 sm:inset-x-6"
+        className="fixed inset-x-0 top-0 z-50 h-20 transition-all duration-700 bg-black/90 backdrop-blur-md border-b border-emerald-500/20"
       >
-        <header className="absolute top-1/2 w-full -translate-y-1/2">
-          <div className="flex items-center justify-between">
-            <img className="w-28 mt-5 h-20" src="/img/pulse-logo.png" alt="" />
-            <nav className="flex size-full items-center justify-center p-4 text-2xl font-bold">
-              <div className="flex h-full items-center">
-                <div className="hidden md:block">
-                  {navigationLinks.map((item, index) => (
-                    <NavLink
-                      to={item.to}
-                      key={index}
-                      className="nav-hover-btn cursor-target px-4 py-2"
-                    >
-                      {item.title}
-                    </NavLink>
-                  ))}
-                </div>
-                <button
-                  onClick={toggleAudioIndicator}
-                  className="ml-10 flex cursor-pointer items-center space-x-0.5"
+        <header className="h-full flex items-center justify-between px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <img 
+              className="w-20 h-14 md:w-24 md:h-16 object-contain hover:scale-105 transition-transform duration-300" 
+              src="/img/pulse-logo.png" 
+              alt="Pulse Logo"
+              width="112"
+              height="80"
+            />
+          </div>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center justify-center flex-1 px-8">
+            <div className="flex items-center gap-2 bg-black/40 backdrop-blur-sm rounded-full px-4 py-2 border border-emerald-500/20">
+              {navigationLinks.map((item, index) => (
+                <NavLink
+                  to={item.to}
+                  key={index}
+                  className={({ isActive }) =>
+                    `relative px-5 py-2.5 text-sm lg:text-base font-semibold rounded-full transition-all duration-300 ${
+                      isActive
+                        ? "text-black bg-gradient-to-r from-emerald-400 to-green-500 shadow-lg shadow-emerald-500/50"
+                        : "text-white hover:text-emerald-400 hover:bg-white/5"
+                    }`
+                  }
                 >
-                  {[1, 2, 3, 4].map((bar) => (
-                    <div
-                      key={bar}
-                      className={clsx("indicator-line", {
-                        active: isAudioPlaying,
-                      })}
-                      style={{ animationDelay: `${bar * 0.1}s` }}
-                    />
-                  ))}
-                </button>
-              </div>
-            </nav>
-
-            <div className="flex items-center gap-4">
-              <div className="hidden lg:block">
-                {user ? (
-                  <ProfileDropdown />
-                ) : (
-                  <div className="flex gap-4">
-                    <NavLink
-                      to="/login"
-                      className="cursor-target rounded-md bg-green-600/95 px-6 py-2 font-bold text-black transition-colors hover:bg-green-700"
-                    >
-                      Login
-                    </NavLink>
-                    <NavLink
-                      to="/register"
-                      className="cursor-target rounded-md border-2 border-green-600 bg-transparent mr-4 px-6 py-2 font-bold text-white transition-all hover:text-red-500"
-                    >
-                      Register
-                    </NavLink>
-                  </div>
-                )}
-              </div>
-
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="relative z-50 flex h-10 w-12 items-center justify-center rounded-lg border border-white/10 bg-black/30 text-white transition-all duration-300 hover:bg-black/50 focus:outline-none lg:hidden"
-              >
-                <div className="relative flex h-4 w-5 flex-col justify-between">
-                  <span
-                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${isOpen ? "w-5 translate-y-1.5 rotate-45" : "w-5"
-                      }`}
-                  ></span>
-                  <span
-                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${isOpen ? "w-5 opacity-0" : "ml-1 w-4"
-                      }`}
-                  ></span>
-                  <span
-                    className={`block h-0.5 rounded-full bg-white transition-all duration-300 ${isOpen ? "w-5 -translate-y-1.5 -rotate-45" : "ml-2 w-3"
-                      }`}
-                  ></span>
-                </div>
-              </button>
+                  {item.title}
+                </NavLink>
+              ))}
             </div>
+          </nav>
+
+          {/* Auth Buttons / Profile */}
+          <div className="flex items-center gap-3">
+            <div className="hidden lg:block">
+              {user ? (
+                <ProfileDropdown />
+              ) : (
+                <div className="flex gap-3">
+                  <NavLink
+                    to="/login"
+                    className="px-5 py-2.5 rounded-xl border border-emerald-500/30 bg-black/40 font-semibold text-white hover:bg-emerald-500/10 hover:border-emerald-500/50 transition-all duration-300 text-sm"
+                  >
+                    Login
+                  </NavLink>
+                  <NavLink
+                    to="/register"
+                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-green-500 font-semibold text-black hover:from-emerald-400 hover:to-green-400 transition-all duration-300 shadow-lg shadow-emerald-500/50 hover:shadow-emerald-400/60 text-sm"
+                  >
+                    Register
+                  </NavLink>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="relative z-50 flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-500/30 bg-black/60 backdrop-blur-sm text-white transition-all duration-300 hover:bg-emerald-500/10 hover:border-emerald-500/50 focus:outline-none lg:hidden"
+            >
+              <div className="relative flex h-5 w-6 flex-col justify-between">
+                <span
+                  className={`block h-0.5 rounded-full bg-emerald-400 transition-all duration-300 ${
+                    isOpen ? "w-6 translate-y-2 rotate-45" : "w-6"
+                  }`}
+                ></span>
+                <span
+                  className={`block h-0.5 rounded-full bg-emerald-400 transition-all duration-300 ${
+                    isOpen ? "w-6 opacity-0" : "w-5"
+                  }`}
+                ></span>
+                <span
+                  className={`block h-0.5 rounded-full bg-emerald-400 transition-all duration-300 ${
+                    isOpen ? "w-6 -translate-y-2 -rotate-45" : "w-4"
+                  }`}
+                ></span>
+              </div>
+            </button>
           </div>
         </header>
       </div>
 
       <div
         className={clsx(
-          "fixed inset-0 bg-black right-0 top-0 z-40 h-full w-full transform  transition-all duration-500 ease-in-out lg:hidden",
+          "fixed inset-0 bg-gradient-to-br from-black via-emerald-950/20 to-black right-0 top-0 z-40 h-full w-full transform transition-all duration-500 ease-in-out lg:hidden backdrop-blur-xl",
           {
             "translate-x-0 opacity-100": isOpen,
             "translate-x-full opacity-0": !isOpen,
@@ -253,8 +259,8 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
           }
         )}
       >
-        <div className="flex h-full w-full flex-col items-center justify-between p-8 pt-24">
-          <div className="flex w-full flex-col gap-4">
+        <div className="flex h-full w-full flex-col items-center justify-between p-8 pt-28">
+          <div className="flex w-full flex-col gap-3">
             {navigationLinks.map((link, index) => (
               <NavLink
                 key={link.title}
@@ -262,11 +268,11 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
                 onClick={() => setIsOpen(false)}
                 className={({ isActive }) =>
                   clsx(
-                    "menu-item w-full rounded-xl px-6 py-4 text-center text-2xl font-semibold transition-all duration-300 ease-in-out",
+                    "menu-item w-full rounded-2xl px-8 py-4 text-center text-xl font-semibold transition-all duration-300 ease-in-out border",
                     {
-                      "bg-white bg-gradient-to-r text-black shadow-lg":
+                      "bg-gradient-to-r from-emerald-500 to-green-500 text-black border-emerald-400 shadow-lg shadow-emerald-500/50":
                         isActive,
-                      "text-white hover:bg-white/10": !isActive,
+                      "text-white hover:bg-emerald-500/10 border-emerald-500/20 hover:border-emerald-500/40": !isActive,
                     }
                   )
                 }
@@ -285,14 +291,14 @@ const Navbar = ({ isAudioPlaying, setIsAudioPlaying, audioElementRef }) => {
                 <NavLink
                   to="/login"
                   onClick={() => setIsOpen(false)}
-                  className="cursor-target rounded-xl bg-green-500 px-6 py-3 text-center text-lg font-medium text-black transition-all hover:bg-gray-200"
+                  className="rounded-2xl border-2 border-emerald-500/40 bg-black/40 backdrop-blur-sm px-6 py-4 text-center text-lg font-semibold text-white transition-all hover:bg-emerald-500/10 hover:border-emerald-500/60"
                 >
                   Login
                 </NavLink>
                 <NavLink
                   to="/register"
                   onClick={() => setIsOpen(false)}
-                  className="rounded-xl border-2 border-green-500 bg-transparent px-6 py-3 text-center text-lg font-medium text-white transition-all hover:bg-white hover:text-black"
+                  className="rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-4 text-center text-lg font-semibold text-black transition-all hover:from-emerald-400 hover:to-green-400 shadow-lg shadow-emerald-500/50"
                 >
                   Register
                 </NavLink>

@@ -14,6 +14,7 @@
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.14",
     "@studio-freight/lenis": "^1.0.42",
+    "@use-gesture/react": "^10.3.1",
     "axios": "^1.7.8",
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.11",
@@ -24,15 +25,18 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
+    "react-intersection-observer": "^10.0.0",
     "react-lazy-load-image-component": "^1.6.3",
     "react-router-dom": "^6.28.0",
     "react-tsparticles": "^2.12.2",
     "react-use": "^17.6.0",
     "remixicon": "^4.6.0",
+    "swiper": "^12.0.3",
     "three": "^0.170.0",
     "tsparticles": "^3.6.0",
     "tsparticles-slim": "^2.12.0",
     "vanta": "^0.5.24",
+    "vite-plugin-compression": "^0.5.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
@@ -48,6 +52,7 @@
     "globals": "^15.11.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
+    "terser": "^5.44.1",
     "vite": "^5.4.10"
   }
 }

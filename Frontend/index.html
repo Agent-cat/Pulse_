@@ -5,10 +5,37 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/x-icon" href="/img/pulse-logo.png" sizes="32x32" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SURABHI</title>
-  <link rel="preload" href="/src/assets/fonts/SaintCarellClean_PERSONAL_USE_ONLY.otf" as="font" type="font/otf"
-    crossorigin />
-  <link rel="preload" href="/img/pulse-logo.png" as="image" type="image/png" crossorigin />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Pulse - Modern Web Application" />
+  
+  <title>Pulse</title>
+  
+  <!-- DNS Prefetch for external domains -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link rel="dns-prefetch" href="https://fonts.cdnfonts.com" />
+  
+  <!-- Preconnect to critical domains (fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.cdnfonts.com" crossorigin />
+  
+  <!-- Preload Roboto font for LoadingScreen (critical) -->
+  <link 
+    rel="preload" 
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" 
+    as="style" 
+    onload="this.onload=null;this.rel='stylesheet'" 
+  />
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@900&display=swap" />
+  </noscript>
+  
+  <!-- Preload critical images -->
+  <link rel="preload" href="/img/pulse-logo.png" as="image" fetchpriority="high" />
+  <link rel="preload" href="/img/home1.webp" as="image" fetchpriority="high" />
+  <link rel="preload" href="/img/home2.webp" as="image" />
+  <link rel="preload" href="/img/home3.webp" as="image" />
 </head>
 
 <body>

@@ -1,9 +1,26 @@
-import React, { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, useInView } from "framer-motion";
-import { Mail, MapPin, User, CreditCard } from "lucide-react";
+import { Mail, MapPin, User, CreditCard, Info } from "lucide-react";
 
 // Mock data for demonstration
 import facultyData from "../Constants/FacultyData.jsx";
+
+// Debounce hook for search optimization
+const useDebounce = (value, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  
+  useMemo(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+    
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+  
+  return debouncedValue;
+};
 
 const formatSpecialTitle = (title) => {
   return title;
@@ -13,16 +30,24 @@ const Faculty = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // Use useMemo to filter the data only when the search query changes
+  // Debounce search query for better performance
+  const debouncedSearchQuery = useDebounce(searchQuery, 200);
+
+  // Use useMemo to filter the data only when the debounced search query changes
   const filteredFaculty = useMemo(() => {
-    if (!searchQuery) {
+    if (!debouncedSearchQuery) {
       return facultyData;
     }
-    const lowerCaseQuery = searchQuery.toLowerCase();
+    const lowerCaseQuery = debouncedSearchQuery.toLowerCase();
     return facultyData.filter((faculty) =>
       faculty["Name of the Faculty"].toLowerCase().includes(lowerCaseQuery)
     );
-  }, [searchQuery]);
+  }, [debouncedSearchQuery]);
+
+  // Memoize handlers
+  const handleSearchChange = useCallback((e) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
   const getDesignationColor = (designation) => {
     if (designation.includes("Head") || designation.includes("Professor")) {
@@ -104,7 +129,7 @@ const Faculty = () => {
             transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="relative"
           >
-            <h1 className="text-6xl sm:text-7xl md:text-8xl font-bold mb-4">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4">
               <span className="bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500 bg-clip-text text-transparent">
                 {formatSpecialTitle("FACULTY")}
               </span>
@@ -145,7 +170,7 @@ const Faculty = () => {
               type="text"
               placeholder="Search faculty by name..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleSearchChange}
               className="relative w-full p-4 pl-12 rounded-2xl bg-gray-900/80 backdrop-blur-sm text-white border border-emerald-500/30 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all duration-300 shadow-xl"
             />
             <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-400 w-5 h-5" />
@@ -153,7 +178,7 @@ const Faculty = () => {
         </motion.div>
 
         {/* Faculty Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFaculty.length > 0 ? (
             filteredFaculty.map((faculty, index) => (
               <motion.div
@@ -169,121 +194,129 @@ const Faculty = () => {
                 onMouseEnter={() => setHoveredCard(faculty["Emp ID"])}
                 onMouseLeave={() => setHoveredCard(null)}
               >
+                {/* Card Container */}
                 <motion.div
-                  className="absolute -inset-1 bg-gradient-to-r from-emerald-500/20 to-green-400/20 rounded-3xl blur-xl"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-
-                {/* Main card */}
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  className="relative bg-gradient-to-br from-gray-900/90 to-gray-800/90 backdrop-blur-sm rounded-3xl border border-emerald-500/20 hover:border-emerald-500/50 overflow-hidden shadow-xl hover:shadow-2xl hover:shadow-emerald-400/10 transition-all duration-500"
+                  whileHover={{ y: -8 }}
+                  transition={{ duration: 0.3, ease: "easeOut" }}
+                  className="relative h-[420px] rounded-2xl overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border border-emerald-500/20 group-hover:border-emerald-500/50 shadow-xl group-hover:shadow-2xl group-hover:shadow-emerald-500/20 transition-all duration-500"
                 >
-                  {/* Top accent line */}
-                  <motion.div
-                    className="h-1 bg-gradient-to-r from-emerald-400 to-green-400"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.5 }}
-                    style={{ transformOrigin: "left" }}
-                  />
+                  {/* Background Image */}
+                  <div className="absolute inset-0">
+                    <img
+                      src={faculty.image}
+                      alt={faculty["Name of the Faculty"]}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                    />
+                    {/* Light Gradient Overlay - Only at bottom for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/350 via-transparent to-transparent" />
+                    
+                    {/* Hover Overlay - Info Background */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: hoveredCard === faculty["Emp ID"] ? 1 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/60 backdrop-blur-sm"
+                    />
+                  </div>
 
-                  <div className="p-8">
-                    {/* Header */}
-                    <div className="mb-6">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-2xl font-bold text-white group-hover:text-green-300 font-circular-web transition-colors duration-300">
-                          {faculty["Name of the Faculty"]}
-                        </h3>
-                      </div>
-                      <p
-                        className={`text-base font-medium ${getDesignationColor(
-                          faculty.Designation
-                        )} mb-1`}
-                      >
+                  {/* Content */}
+                  <div className="relative h-full p-6">
+                    {/* Name - Always Visible at Bottom */}
+                    <div className="absolute bottom-6 left-6 right-6 z-20">
+                      <h3 className="text-2xl font-bold text-white mb-1 line-clamp-2">
+                        {faculty["Name of the Faculty"]}
+                      </h3>
+                      <p className={`text-sm font-medium ${getDesignationColor(faculty.Designation)}`}>
                         {faculty.Designation}
                       </p>
                     </div>
 
-                    {/* Details Grid */}
-                    <div className="space-y-4">
+                    {/* Details - Show on Hover (slides up from bottom) */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ 
+                        opacity: hoveredCard === faculty["Emp ID"] ? 1 : 0,
+                        y: hoveredCard === faculty["Emp ID"] ? -80 : 20
+                      }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      className="absolute bottom-6 left-6 right-6 space-y-3 z-10"
+                    >
                       {/* Employee ID */}
-                      <div className="flex items-center space-x-4 p-3 rounded-xl bg-gray-800/50 border border-gray-700/30 group-hover:border-green-400/30 transition-all duration-300">
-                        <div className="flex-shrink-0 w-10 h-10 bg-green-400/10 rounded-xl flex items-center justify-center">
-                          <CreditCard className="w-5 h-5 text-green-400" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">
-                            Employee ID
-                          </p>
-                          <p className="text-white font-mono">
-                            {faculty["Emp ID"]}
-                          </p>
+                      <div className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
+                        <CreditCard className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">ID</p>
+                          <p className="text-sm text-white font-mono truncate">{faculty["Emp ID"]}</p>
                         </div>
                       </div>
 
                       {/* Email */}
-                      <div className="flex items-center space-x-4 p-3 rounded-xl bg-gray-800/50 border border-gray-700/30 group-hover:border-green-400/30 transition-all duration-300">
-                        <div className="flex-shrink-0 w-10 h-10 bg-green-400/10 rounded-xl flex items-center justify-center">
-                          <Mail className="w-5 h-5 text-green-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">
-                            Email
-                          </p>
+                      <div className="flex items-center gap-3 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
+                        <Mail className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Email</p>
                           <a
                             href={`mailto:${faculty["mail ID"]}`}
-                            className="text-white hover:text-green-300 transition-colors duration-200 truncate block font-mono text-sm"
+                            className="text-sm text-white hover:text-emerald-300 transition-colors truncate block"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {faculty["mail ID"]}
                           </a>
                         </div>
                       </div>
 
-                      {/* Location Info */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-3 p-3 rounded-xl bg-gray-800/50 border border-gray-700/30 group-hover:border-green-400/30 transition-all duration-300">
-                          <div className="flex-shrink-0 w-10 h-10 bg-green-400/10 rounded-xl flex items-center justify-center">
-                            <MapPin className="w-5 h-5 text-green-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">
-                              Room
-                            </p>
-                            <p className="text-white font-mono">
-                              {faculty["Room No"] || "N/A"}
-                            </p>
+                      {/* Room & Cabin */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
+                          <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Room</p>
+                            <p className="text-sm text-white font-mono truncate">{faculty["Room No"] || "N/A"}</p>
                           </div>
                         </div>
-
-                        <div className="flex items-center space-x-3 p-3 rounded-xl bg-gray-800/50 border border-gray-700/30 group-hover:border-green-400/30 transition-all duration-300">
-                          <div className="flex-shrink-0 w-10 h-10 bg-green-400/10 rounded-xl flex items-center justify-center">
-                            <MapPin className="w-5 h-5 text-green-400" />
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">
-                              Cabin
-                            </p>
-                            <p className="text-white font-mono">
-                              {faculty["Cabin No"] || "N/A"}
-                            </p>
+                        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 backdrop-blur-sm">
+                          <MapPin className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Cabin</p>
+                            <p className="text-sm text-white font-mono truncate">{faculty["Cabin No"] || "N/A"}</p>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
+
+                    {/* More Info Button - Bottom Right */}
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ 
+                        opacity: hoveredCard === faculty["Emp ID"] ? 1 : 0,
+                        scale: hoveredCard === faculty["Emp ID"] ? 1 : 0.8
+                      }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Open faculty profile link in new tab
+                        const profileLink = faculty.profileLink || ``;
+                        window.open(profileLink, '_blank', 'noopener,noreferrer');
+                      }}
+                      className="absolute bottom-6 right-6 z-30 flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 rounded-full text-white text-xs font-medium shadow-lg hover:shadow-emerald-500/50 transition-all duration-300"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                      <span>More Info</span>
+                    </motion.button>
                   </div>
 
-                  {/* Bottom accent for hovered card */}
-                  {hoveredCard === faculty["Emp ID"] && (
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-green-400"
-                    />
-                  )}
+                  {/* Top Accent Line */}
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: hoveredCard === faculty["Emp ID"] ? 1 : 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 via-green-400 to-emerald-500"
+                    style={{ transformOrigin: "left" }}
+                  />
                 </motion.div>
               </motion.div>
             ))
@@ -317,7 +350,7 @@ const Faculty = () => {
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="text-gray-500 text-lg max-w-md mx-auto"
                 >
-                  Your search didn't match any faculty names. Try adjusting your
+                  Your search didn&apos;t match any faculty names. Try adjusting your
                   search terms.
                 </motion.p>
               </div>

@@ -27,6 +27,9 @@ export default {
           300: "#edff66",
         },
       },
+      scale: {
+        '102': '1.02',
+      },
     },
   },
   plugins: [],
