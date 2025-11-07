@@ -7,61 +7,157 @@ const Team = () => {
 
   const teamMembers = [
     { 
-      name: "Arjun Kumar", 
-      role: "President", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o2.jpeg?updatedAt=1754289569307",
+      name: "COMMING SOON", 
+      role: "President",
+      image: "/img/pngegg.png", 
       gradient: "from-purple-500 to-pink-500",
       description: "Leading Pulse with vision and innovation"
     },
     { 
-      name: "Priya Sharma", 
+      name: "MK.RAHUL", 
       role: "Vice President", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      image:"/img/pulse team/vice - president/rahul.JPG",
       gradient: "from-blue-500 to-cyan-500",
       description: "Coordinating events and team activities"
     },
     { 
-      name: "Vikram Singh", 
-      role: "Technical Head", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o3.jpeg?updatedAt=1754289569422",
+      name: "JYOSHNA K", 
+      role: "Vice President", 
+      image: "/img/pulse team/vice - president/jyo.JPG",
       gradient: "from-green-500 to-emerald-500",
       description: "Managing technical workshops and projects"
     },
     { 
-      name: "Ananya Reddy", 
-      role: "Events Manager", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o5.jpeg?updatedAt=1754289569406",
+      name: "KAMAL", 
+      role: "TESURER", 
+      image: "/img/pulse team/teasurer/DSC00295.JPG",
       gradient: "from-orange-500 to-red-500",
       description: "Organizing hackathons and competitions"
     },
     { 
-      name: "Rahul Patel", 
-      role: "Creative Director", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o6.jpeg?updatedAt=1754289569438",
+      name: "CHANDRA HASA", 
+      role: "REGISTRATION AND CERTIFICATES HEAD", 
+      image: "/img/pulse team/r&c/DSC00085.JPG"
+,
       gradient: "from-indigo-500 to-purple-500",
       description: "Designing visuals and branding"
     },
     { 
-      name: "Sneha Iyer", 
-      role: "Social Media Lead", 
+      name: "NAGA SAI RAM", 
+      role: "REGISTRATION AND CERTIFICATES HEAD", 
       image: "https://ik.imagekit.io/gopichakradhar/luffy/o2.jpeg?updatedAt=1754289569307",
       gradient: "from-pink-500 to-rose-500",
       description: "Managing digital presence and outreach"
     },
     { 
-      name: "Karthik Menon", 
-      role: "Workshop Coordinator", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      name: " SIVESH", 
+      role: "TECHNICAL HEAD", 
+      image: "/img/pulse team/technical head/siv.JPG",
       gradient: "from-teal-500 to-green-500",
       description: "Conducting technical training sessions"
     },
     { 
-      name: "Divya Nair", 
-      role: "Sponsorship Head", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o3.jpeg?updatedAt=1754289569422",
+      name: " GOKUL", 
+      role: "TECHNICAL HEAD", 
+      image: "/img/pulse team/technical/DSC00109.JPG",
       gradient: "from-yellow-500 to-orange-500",
       description: "Securing partnerships and funding"
-    }
+    },
+      { 
+      name: " SATYA PRAKASH", 
+      role: "TECHNICAL HEAD", 
+      image: "/img/satya.enc",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: "SHASHANK", 
+      role: "DESIGNING HEAD", 
+      image: "/img/pulse team/designing/DSC00088.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: "JEEVAN ", 
+      role: "DESIGNING HEAD", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: "HARSHA", 
+      role: "DESIGNING HEAD", 
+      image: "/img/pulse team/designing/DSC00333.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " RAKESH", 
+      role: "CAMPUS RELATIONS HEAD", 
+      image: "/img/pulse team/cr/DSC00350.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " CHAHAT", 
+      role: "STAGE MANAGEMENT HEAD", 
+      image: "/img/pulse team/stage management/DSC00240.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " RAMYA", 
+      role: "STAGE MANAGEMENT HEAD", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " PRERNA", 
+      role: "STAGE MANAGEMENT HEAD", 
+      image: "/img/pulse team/stage management/DSC00204.JPG",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " SRAVAN", 
+      role: "CULTURALS HEAD", 
+      image: "/img/sravan.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: "MANJU", 
+      role: "CULTURALS HEAD", 
+      image: "/img/pulse team/culturals/DSC00384.JPG",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: "BALAJI", 
+      role: "CULTURALS HEAD", 
+      image: "/img/pulse team/culturals/DSC00063.JPG",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: "JHANAVI", 
+      role: "DRAFTING HEAD", 
+      image: "/img/pulse team/drafting/DSC00161.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " SONY SRI", 
+      role: "BLOOD BANK HEAD", 
+      image: "/img/pulse team/drafting/DSC00218.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      { 
+      name: " SAI LAKSHIMI", 
+      role: "HR INFO HEAD",
+      image: "/img/pulse team/hr info/DSC00186.JPG", 
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+      
   ];
 
   return (
