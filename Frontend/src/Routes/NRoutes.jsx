@@ -1,25 +1,26 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Home from "../Pages/Home";
-import Gallery from "../Pages/Gallery";
-import Events from "../Pages/Events";
-import Login from "../Pages/Login";
-import Register from "../Pages/Register";
-import About from "../Pages/About";
-import Alumini from "../Pages/Alumini";
-import Blood from "../Pages/Blood";
-
+import { lazy } from "react";
 import ProtectedRoute from "../utils/ProtectedRoute";
-
-import AdminPanel from "../Pages/AdminPanel";
-import RegisteredEvents from "../Pages/RegisteredEvents";
 import AuthRoute from "../utils/AuthRoute";
 import { getUser } from "../utils/auth";
-import PleaseLogin from "../Pages/PleaseLogin";
-import ForgotPassword from "../Components/ForgotPassword";
-import UserDetails from "../Pages/UserDetails";
-import Team from "../Pages/Team";
-import Faculty from "../Pages/Faculty";
-import Zrotriya from "../Pages/Zrotriya";
+
+// Lazy load pages for better performance
+const Home = lazy(() => import("../Pages/Home"));
+const Gallery = lazy(() => import("../Pages/Gallery"));
+const Events = lazy(() => import("../Pages/Events"));
+const Login = lazy(() => import("../Pages/Login"));
+const Register = lazy(() => import("../Pages/Register"));
+const About = lazy(() => import("../Pages/About"));
+const Alumini = lazy(() => import("../Pages/Alumini"));
+const Blood = lazy(() => import("../Pages/Blood"));
+const AdminPanel = lazy(() => import("../Pages/AdminPanel"));
+const RegisteredEvents = lazy(() => import("../Pages/RegisteredEvents"));
+const PleaseLogin = lazy(() => import("../Pages/PleaseLogin"));
+const ForgotPassword = lazy(() => import("../Components/ForgotPassword"));
+const UserDetails = lazy(() => import("../Pages/UserDetails"));
+const Team = lazy(() => import("../Pages/Team"));
+const Faculty = lazy(() => import("../Pages/Faculty"));
+const Zrotriya = lazy(() => import("../Pages/Zrotriya"));
 
 const NRoutes = () => {
   const user = getUser();

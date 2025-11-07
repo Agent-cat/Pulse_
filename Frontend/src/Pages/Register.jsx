@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
 import { setToken, setUser } from "../utils/auth";
@@ -49,8 +49,6 @@ const Register = () => {
         throw new Error("Please enter a valid email address");
       }
 
-      console.log("Sending OTP request for:", formData.email);
-
       const response = await fetch(`${url}/api/users/send-verification-otp`, {
         method: "POST",
         headers: {
@@ -60,8 +58,6 @@ const Register = () => {
       });
 
       const data = await response.json();
-
-      console.log("Server response:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Failed to send OTP");
@@ -171,7 +167,6 @@ const Register = () => {
       });
 
       const data = await response.json();
-      console.log(data);
       if (!response.ok) {
         throw new Error(data.error || "Registration failed");
       }

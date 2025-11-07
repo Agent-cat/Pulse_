@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import { IoChevronDown, IoChevronUp } from "react-icons/io5";
 import * as XLSX from "xlsx";
 
@@ -10,7 +11,6 @@ const EventModal = React.memo(
     closeEventModal,
     editingEvent,
   }) => {
-    const url = import.meta.env.VITE_API_URL;
     return (
       <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 overflow-y-auto">
         <div className="bg-gray-800 rounded-xl w-full max-w-2xl my-8 mx-4 relative">
@@ -192,6 +192,26 @@ const EventModal = React.memo(
   }
 );
 
+EventModal.displayName = "EventModal";
+
+EventModal.propTypes = {
+  eventForm: PropTypes.shape({
+    title: PropTypes.string,
+    description: PropTypes.string,
+    venue: PropTypes.string,
+    date: PropTypes.string,
+    startTime: PropTypes.string,
+    endTime: PropTypes.string,
+    image: PropTypes.string,
+    participantLimit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    termsandconditions: PropTypes.string,
+  }).isRequired,
+  setEventForm: PropTypes.func.isRequired,
+  handleEventSubmit: PropTypes.func.isRequired,
+  closeEventModal: PropTypes.func.isRequired,
+  editingEvent: PropTypes.object,
+};
+
 const CategoryModal = React.memo(
   ({
     categoryForm,
@@ -265,7 +285,45 @@ const CategoryModal = React.memo(
   }
 );
 
+CategoryModal.displayName = "CategoryModal";
+
+CategoryModal.propTypes = {
+  categoryForm: PropTypes.shape({
+    categoryName: PropTypes.string,
+  }).isRequired,
+  setCategoryForm: PropTypes.func.isRequired,
+  handleCategorySubmit: PropTypes.func.isRequired,
+  closeCategoryModal: PropTypes.func.isRequired,
+};
+
 const EventRegistrations = ({ event, onClose }) => {
+  const url = import.meta.env.VITE_API_URL;
+  
+  const handleApproval = async (userId, status) => {
+    try {
+      const response = await fetch(
+        `${url}/api/admin/registrations/${userId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ status }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update registration");
+      }
+
+      // Reload the page or update the state to reflect changes
+      window.location.reload();
+    } catch (error) {
+      console.error("Error updating registration:", error);
+    }
+  };
+  
   const exportToExcel = () => {
     // Prepare the data for export
     const exportData = event.registeredStudents.map((student) => ({
@@ -428,6 +486,28 @@ const EventRegistrations = ({ event, onClose }) => {
   );
 };
 
+EventRegistrations.propTypes = {
+  event: PropTypes.shape({
+    _id: PropTypes.string,
+    title: PropTypes.string,
+    category: PropTypes.shape({
+      categoryName: PropTypes.string,
+    }),
+    registeredStudents: PropTypes.arrayOf(
+      PropTypes.shape({
+        _id: PropTypes.string,
+        fullName: PropTypes.string,
+        email: PropTypes.string,
+        college: PropTypes.string,
+        collegeId: PropTypes.string,
+        paymentScreenshot: PropTypes.string,
+        paymentStatus: PropTypes.string,
+      })
+    ),
+  }).isRequired,
+  onClose: PropTypes.func.isRequired,
+};
+
 
 const getStatusBadgeColor = (status) => {
   switch (status) {
@@ -469,6 +549,8 @@ const AdminPanel = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [expandedEvents, setExpandedEvents] = useState(new Set());
 
+  const url = import.meta.env.VITE_API_URL;
+
   const closeEventModal = useCallback(() => {
     setShowEventModal(false);
     setEventForm({
@@ -485,21 +567,12 @@ const AdminPanel = () => {
     setEditingEvent(null);
   }, []);
 
-  const url = import.meta.env.VITE_API_URL;
   const closeCategoryModal = useCallback(() => {
     setShowCategoryModal(false);
     setCategoryForm({ categoryName: "" });
   }, []);
 
-  useEffect(() => {
-    if (view === "registrations") {
-      fetchRegistrations();
-    } else {
-      fetchEvents();
-    }
-  }, [filter, view]);
-
-  const fetchRegistrations = async () => {
+  const fetchRegistrations = useCallback(async () => {
     try {
       const response = await fetch(
         `${url}/api/admin/registrations${filter !== "all" ? `?status=${filter}` : ""
@@ -517,7 +590,7 @@ const AdminPanel = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [filter, url]);
 
   const fetchEvents = useCallback(async () => {
     try {
@@ -540,22 +613,21 @@ const AdminPanel = () => {
       console.error("Error fetching events:", error);
       alert("Failed to fetch events. Please try again.");
     }
-  }, []);
+  }, [url]);
+
+  useEffect(() => {
+    if (view === "registrations") {
+      fetchRegistrations();
+    } else {
+      fetchEvents();
+    }
+  }, [filter, view, fetchRegistrations, fetchEvents]);
 
   useEffect(() => {
     fetchEvents();
   }, [fetchEvents]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "approved":
-        return "text-green-500";
-      case "rejected":
-        return "text-red-500";
-      default:
-        return "text-yellow-500";
-    }
-  };
+
 
   const handleApproval = async (userId, status) => {
     try {
@@ -646,13 +718,11 @@ const AdminPanel = () => {
         closeEventModal();
       } catch (error) {
         console.error("Error saving event:", error);
-        alert("Failed to save event. Please try again.");
-      }
-    },
-    [eventForm, selectedCategory, editingEvent, closeEventModal]
-  );
-
-  const handleAddEvent = useCallback((categoryId) => {
+      alert("Failed to save event. Please try again.");
+    }
+  },
+    [eventForm, selectedCategory, editingEvent, closeEventModal, fetchEvents, url]
+  );  const handleAddEvent = useCallback((categoryId) => {
     setSelectedCategory(categoryId);
     setEditingEvent(null);
     setEventForm({
@@ -700,7 +770,6 @@ const AdminPanel = () => {
   const handleCategorySubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      console.log("Submitting category:", categoryForm); // Debug log
 
       try {
         const response = await fetch(
@@ -720,9 +789,6 @@ const AdminPanel = () => {
           throw new Error(errorData.message || "Failed to create category");
         }
 
-        const data = await response.json();
-        console.log("Category created:", data); // Debug log
-
         await fetchEvents(); // Refresh the categories
         closeCategoryModal();
         setCategoryForm({ categoryName: "" }); // Reset form
@@ -731,35 +797,10 @@ const AdminPanel = () => {
         alert(error.message || "Failed to create category. Please try again.");
       }
     },
-    [categoryForm, closeCategoryModal]
+    [categoryForm, closeCategoryModal, fetchEvents, url]
   );
 
-  const handleUpdateCategory = useCallback(async (categoryId, newName) => {
-    try {
-      const response = await fetch(
-        `${url}/api/events/category/${categoryId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            categoryName: newName,
-          }),
-        }
-      );
 
-      if (!response.ok) {
-        throw new Error("Failed to update category");
-      }
-
-      await fetchEvents();
-    } catch (error) {
-      console.error("Error updating category:", error);
-      alert("Failed to update category. Please try again.");
-    }
-  }, []);
 
   const handleDeleteCategory = useCallback(async (categoryId) => {
     if (
@@ -790,7 +831,7 @@ const AdminPanel = () => {
       console.error("Error deleting category:", error);
       alert("Failed to delete category. Please try again.");
     }
-  }, []);
+  }, [fetchEvents, url]);
 
   const handleViewRegistrations = (event) => {
     setSelectedEvent(event);

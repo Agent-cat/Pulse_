@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, Suspense, lazy, memo } from "react";
 import { useLocation } from "react-router-dom";
-import Navbar from "./Components/Navbar";
-import NRoutes from "./Routes/NRoutes";
-import Footer from "./Components/Footer";
 import { useLenis } from "./hooks/useLenis";
 import { MotionConfig } from "framer-motion";
+
+// Eager load critical components
+import Navbar from "./Components/Navbar";
+import NRoutes from "./Routes/NRoutes";
 import LoadingScreen from "./Components/LoadingScreen";
 import PageTransitionLoader from "./Components/PageTransitionLoader";
-import GreenDustBackground from "./Components/GreenDustBackground";
-// import CustomCursor from "./Components/CustomCursor";
+
+// Lazy load non-critical components
+const Footer = lazy(() => import("./Components/Footer"));
+const GreenDustBackground = lazy(() => import("./Components/GreenDustBackground"));
 
 const App = () => {
   const location = useLocation();
@@ -16,37 +19,50 @@ const App = () => {
   const [routeLoading, setRouteLoading] = useState(false);
   useLenis();
 
+  // Optimized scroll to top with smooth behavior
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [location.pathname]);
 
+  // Initial loading with optimized timing
   useEffect(() => {
-    const t = setTimeout(() => setInitialLoading(false), 2600);
+    const t = setTimeout(() => {
+      setInitialLoading(false);
+      // Preload footer after initial load
+      import("./Components/Footer");
+    }, 2200);
     return () => clearTimeout(t);
   }, []);
 
+  // Route transition with reduced timing for smoother feel
   useEffect(() => {
-    // show a brief loader on route changes
     setRouteLoading(true);
-    const t = setTimeout(() => setRouteLoading(false), 1600);
+    const t = setTimeout(() => setRouteLoading(false), 800);
     return () => clearTimeout(t);
   }, [location.pathname]);
 
   return (
-    <MotionConfig reducedMotion="user">
-      <GreenDustBackground />
-      {/* <CustomCursor /> */}
+    <MotionConfig reducedMotion="user" transition={{ duration: 0.3, ease: "easeInOut" }}>
+      <Suspense fallback={null}>
+        <GreenDustBackground />
+      </Suspense>
       <LoadingScreen visible={initialLoading} />
-      {/* <PageTransitionLoader visible={routeLoading && !initialLoading} /> */}
+      <PageTransitionLoader visible={routeLoading && !initialLoading} />
       <div className="relative bg-black min-h-screen">
         <div className="select-none">
           <Navbar />
-          <NRoutes />
-          {/* <Footer /> */}
+          <main className="pt-20 contain-layout">
+            <Suspense fallback={<PageTransitionLoader visible={true} />}>
+              <NRoutes />
+            </Suspense>
+          </main>
+          <Suspense fallback={<div className="h-20" />}>
+            <Footer />
+          </Suspense>
         </div>
       </div>
     </MotionConfig>
   );
 };
 
-export default App;
+export default memo(App);

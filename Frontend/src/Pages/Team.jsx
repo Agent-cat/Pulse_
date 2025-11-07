@@ -1,232 +1,285 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import LazyImage from '../Components/LazyImage';
 
 const Team = () => {
+  const [hoveredCard, setHoveredCard] = useState(null);
+
   const teamMembers = [
-    { name: "Luffy", role: "Founder", image: "https://ik.imagekit.io/gopichakradhar/luffy/o1.jpeg?updatedAt=1754289569411" },
-    { name: "Monkey D. Luffy", role: "Creative Director", image: "https://ik.imagekit.io/gopichakradhar/luffy/o2.jpeg?updatedAt=1754289569307" },
-    { name: "Luffy chan", role: "Lead Developer", image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398" },
-    { name: "Lucy", role: "UX Designer", image: "https://ik.imagekit.io/gopichakradhar/luffy/o3.jpeg?updatedAt=1754289569422" },
-    { name: "Luffy kun", role: "Marketing Manager", image: "https://ik.imagekit.io/gopichakradhar/luffy/o5.jpeg?updatedAt=1754289569406" },
-    { name: "Monkey chan", role: "Product Manager", image: "https://ik.imagekit.io/gopichakradhar/luffy/o6.jpeg?updatedAt=1754289569438" }
+    { 
+      name: "Arjun Kumar", 
+      role: "President", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o2.jpeg?updatedAt=1754289569307",
+      gradient: "from-purple-500 to-pink-500",
+      description: "Leading Pulse with vision and innovation"
+    },
+    { 
+      name: "Priya Sharma", 
+      role: "Vice President", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      gradient: "from-blue-500 to-cyan-500",
+      description: "Coordinating events and team activities"
+    },
+    { 
+      name: "Vikram Singh", 
+      role: "Technical Head", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o3.jpeg?updatedAt=1754289569422",
+      gradient: "from-green-500 to-emerald-500",
+      description: "Managing technical workshops and projects"
+    },
+    { 
+      name: "Ananya Reddy", 
+      role: "Events Manager", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o5.jpeg?updatedAt=1754289569406",
+      gradient: "from-orange-500 to-red-500",
+      description: "Organizing hackathons and competitions"
+    },
+    { 
+      name: "Rahul Patel", 
+      role: "Creative Director", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o6.jpeg?updatedAt=1754289569438",
+      gradient: "from-indigo-500 to-purple-500",
+      description: "Designing visuals and branding"
+    },
+    { 
+      name: "Sneha Iyer", 
+      role: "Social Media Lead", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o2.jpeg?updatedAt=1754289569307",
+      gradient: "from-pink-500 to-rose-500",
+      description: "Managing digital presence and outreach"
+    },
+    { 
+      name: "Karthik Menon", 
+      role: "Workshop Coordinator", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+    { 
+      name: "Divya Nair", 
+      role: "Sponsorship Head", 
+      image: "https://ik.imagekit.io/gopichakradhar/luffy/o3.jpeg?updatedAt=1754289569422",
+      gradient: "from-yellow-500 to-orange-500",
+      description: "Securing partnerships and funding"
+    }
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [showNameRole, setShowNameRole] = useState(true);
-  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
-
-  const [dragStart, setDragStart] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const updateCarousel = (newIndex) => {
-    if (isAnimating) return;
-
-    setIsAnimating(true);
-    const normalizedIndex = (newIndex + teamMembers.length) % teamMembers.length;
-
-    setShowNameRole(false);
-
-    setTimeout(() => {
-      setCurrentIndex(normalizedIndex);
-      setShowNameRole(true);
-    }, 300);
-
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 800);
-  };
-
-  const getCardPosition = (index) => {
-    const offset = (index - currentIndex + teamMembers.length) % teamMembers.length;
-
-    if (offset === 0) return 'center';
-    if (offset === 1) return 'down-1';
-    if (offset === 2) return 'down-2';
-    if (offset === teamMembers.length - 1) return 'up-1';
-    if (offset === teamMembers.length - 2) return 'up-2';
-    return 'hidden';
-  };
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowUp') {
-        updateCarousel(currentIndex - 1);
-      } else if (e.key === 'ArrowDown') {
-        updateCarousel(currentIndex + 1);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, isAnimating]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowScrollIndicator(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleDragStart = (y) => {
-    setDragStart(y);
-    setIsDragging(true);
-  };
-
-  const handleDragEnd = (y) => {
-    if (!isDragging) return;
-    setIsDragging(false);
-
-    const swipeThreshold = 50;
-    const diff = dragStart - y;
-
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0) {
-        updateCarousel(currentIndex + 1); // Dragged/Swiped Up
-      } else {
-        updateCarousel(currentIndex - 1); // Dragged/Swiped Down
-      }
-    }
-  };
-
-  const handleDragMove = (e) => {
-    if (isDragging) {
-      e.preventDefault(); // Prevents text selection during drag
-    }
-  };
-
   return (
-    <div className="min-h-screen flex  flex-col items-center justify-center bg-black overflow-hidden py-5 md:py-20">
-      <div className="flex flex-col md:flex-row w-full max-w-[1200px] md:h-[80vh] gap-10 md:gap-[60px] items-center justify-center px-4">
-        {/* Carousel Section */}
-        <div className="flex-1 flex justify-center items-center w-full md:w-auto">
-          <div className="w-full max-w-[500px] h-[70vh] relative" style={{ perspective: '1000px' }}>
-
-            {/* Carousel Track */}
-            <div
-              className="w-[450px] h-full flex flex-col justify-center items-center relative transition-transform duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
-              style={{
-                transformStyle: 'preserve-3d',
-                cursor: isDragging ? 'grabbing' : 'grab'
-              }}
-              onMouseDown={(e) => { e.preventDefault(); handleDragStart(e.clientY); }}
-              onMouseUp={(e) => handleDragEnd(e.clientY)}
-              onMouseMove={handleDragMove}
-              onMouseLeave={() => { if (isDragging) setIsDragging(false); }}
-              onTouchStart={(e) => handleDragStart(e.changedTouches[0].screenY)}
-              onTouchEnd={(e) => handleDragEnd(e.changedTouches[0].screenY)}
-            >
-              {teamMembers.map((member, index) => {
-                const position = getCardPosition(index);
-
-                const getTransform = () => {
-                  if (position === 'center') return 'scale(1.1) translateZ(0)';
-                  if (position === 'up-1') return 'translateY(-150px) scale(0.9) translateZ(-100px)';
-                  if (position === 'up-2') return 'translateY(-300px) scale(0.8) translateZ(-300px)';
-                  if (position === 'down-1') return 'translateY(150px) scale(0.9) translateZ(-100px)';
-                  if (position === 'down-2') return 'translateY(300px) scale(0.8) translateZ(-300px)';
-                  return '';
-                };
-
-                const getOpacity = () => {
-                  if (position === 'center') return 1;
-                  if (position === 'up-1' || position === 'down-1') return 0.9;
-                  if (position === 'up-2' || position === 'down-2') return 0.7;
-                  return 0;
-                };
-
-                const getZIndex = () => {
-                  if (position === 'center') return 10;
-                  if (position === 'up-1' || position === 'down-1') return 5;
-                  if (position === 'up-2' || (position === 'down-2')) return 1;
-                  return 0;
-                };
-
-                return (
-                  <div
-                    key={index}
-                    onClick={() => { if (position !== 'center') updateCarousel(index); }}
-                    className="absolute  w-[400px] h-[225px] bg-white rounded-[20px] overflow-hidden shadow-[0_20px_40px_rgba(0,0,0,0.15)] cursor-pointer transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)]"
-                    style={{
-                      transform: getTransform(),
-                      opacity: position === 'hidden' ? 0 : getOpacity(),
-                      zIndex: getZIndex(),
-                      pointerEvents: position === 'hidden' ? 'none' : 'auto',
-                      cursor: position === 'center' ? 'default' : 'pointer'
-                    }}
-                  >
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className={`w-full h-full object-cover transition-all duration-[800ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${position !== 'center' ? 'grayscale' : ''}`}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* Controls Section */}
-        <div className="flex-1 flex flex-col justify-center items-center gap-10 md:pl-10 w-full md:w-auto">
-          {/* Member Info */}
-          <div className={`text-center mt-5 transition-opacity duration-500 ${showNameRole ? 'opacity-100' : 'opacity-0'}`}>
-            <h2 className="text-[#082A7B] text-[1.8rem] md:text-[2rem] font-bold mb-2 relative inline-block">
-              {teamMembers[currentIndex].name}
-              <span className="absolute top-full left-[-60px] md:left-[-100px] w-10 md:w-20 h-0.5 bg-[#082A7B]"></span>
-              <span className="absolute top-full right-[-60px] md:right-[-100px] w-10 md:w-20 h-0.5 bg-[#082A7B]"></span>
-            </h2>
-            <p className="text-[#848696] text-base md:text-xl font-medium opacity-80 uppercase tracking-[0.1em] py-[5px] -mt-[10px]">
-              {teamMembers[currentIndex].role}
-            </p>
-          </div>
-
-          {/* Dots Navigation */}
-          <div className="flex justify-center gap-[10px] mt-[30px]">
-            {teamMembers.map((_, index) => (
-              <div
-                key={index}
-                onClick={() => updateCarousel(index)}
-                className={`w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${index === currentIndex
-                  ? 'bg-[#082A7B] scale-125'
-                  : 'bg-[#082A7B]/20'
-                  }`}
-              />
-            ))}
-          </div>
-        </div>
+    <div className="min-h-screen bg-black text-white py-20 px-4 sm:px-8 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute top-20 left-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, -80, 0],
+            y: [0, 100, 0],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute bottom-20 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -80, 0],
+          }}
+          transition={{
+            duration: 22,
+            repeat: Infinity,
+            ease: 'easeInOut',
+          }}
+          className="absolute top-1/2 left-1/2 w-96 h-96 bg-green-500/10 rounded-full blur-3xl"
+        />
       </div>
 
-      {/* Scroll Indicator */}
-      {showScrollIndicator && (
-        <div
-          className="fixed bottom-5 md:bottom-[30px] right-5 md:right-[30px] bg-[#082A7B]/80 text-white px-3 md:px-4 py-2 rounded-[20px] text-xs md:text-sm text-center z-[1000] backdrop-blur-[10px] border border-white/20 font-medium leading-none animate-[scrollFadeOut_5s_ease-in-out_forwards]"
+      {/* Header Section */}
+      <div className="max-w-7xl mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          scroll
-          <span className="text-[0.7rem] opacity-90 block mt-0.5">↕</span>
-        </div>
-      )}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="inline-block mb-4"
+          >
+            <span className="px-6 py-2 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full text-green-400 text-sm font-semibold backdrop-blur-sm">
+              Meet Our Team
+            </span>
+          </motion.div>
+          
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-green-400 via-emerald-500 to-teal-400 bg-clip-text text-transparent special-font">
+            The Pulse Team
+          </h1>
+          
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            Dedicated ECE students working together to create amazing experiences and opportunities for the entire department
+          </p>
+        </motion.div>
 
-      <style>{`
-        @keyframes scrollFadeOut {
-          0% {
-            opacity: 0;
-            transform: scale(0.8);
-          }
-          10% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          90% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          100% {
-            opacity: 0;
-            transform: scale(0.8);
-            visibility: hidden;
-          }
-        }
-      `}</style>
+        {/* Team Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {teamMembers.map((member, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              onMouseEnter={() => setHoveredCard(index)}
+              onMouseLeave={() => setHoveredCard(null)}
+              className="group relative"
+            >
+              {/* Card Container */}
+              <div className="relative h-[450px] rounded-3xl overflow-hidden bg-gradient-to-br from-gray-900 to-black border border-gray-800 transition-all duration-500 hover:border-green-500/50 hover:shadow-2xl hover:shadow-green-500/20">
+                
+                {/* Image Section */}
+                <div className="relative h-[280px] overflow-hidden">
+                  <LazyImage
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    wrapperClassName="w-full h-full"
+                    aspectRatio="auto"
+                  />
+                  
+                  {/* Gradient Overlay */}
+                  <div className={`absolute inset-0 bg-gradient-to-t ${member.gradient} opacity-0 group-hover:opacity-40 transition-opacity duration-500`} />
+                  
+                  {/* Animated Corner Accent */}
+                  <motion.div
+                    animate={{
+                      scale: hoveredCard === index ? [1, 1.2, 1] : 1,
+                      opacity: hoveredCard === index ? [0.5, 1, 0.5] : 0,
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: hoveredCard === index ? Infinity : 0,
+                    }}
+                    className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${member.gradient} blur-2xl`}
+                  />
+                </div>
+
+                {/* Content Section */}
+                <div className="relative p-6 flex flex-col justify-between h-[170px]">
+                  {/* Name & Role */}
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-2 special-font group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-green-400 group-hover:to-emerald-500 group-hover:bg-clip-text transition-all duration-300">
+                      {member.name}
+                    </h3>
+                    
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${member.gradient}`} />
+                      <p className="text-green-400 text-sm font-semibold uppercase tracking-wider">
+                        {member.role}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description - Shows on Hover */}
+                  <motion.p
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{
+                      opacity: hoveredCard === index ? 1 : 0,
+                      height: hoveredCard === index ? 'auto' : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="text-gray-400 text-sm leading-relaxed overflow-hidden"
+                  >
+                    {member.description}
+                  </motion.p>
+
+                  {/* Decorative Line */}
+                  <motion.div
+                    initial={{ width: '30px' }}
+                    animate={{
+                      width: hoveredCard === index ? '100%' : '30px',
+                    }}
+                    transition={{ duration: 0.5 }}
+                    className={`h-[2px] bg-gradient-to-r ${member.gradient} rounded-full mt-auto`}
+                  />
+                </div>
+
+                {/* Floating Social Icons - Shows on Hover */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: hoveredCard === index ? 1 : 0,
+                    y: hoveredCard === index ? 0 : 20,
+                  }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                  className="absolute bottom-6 right-6 flex gap-3"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.2, rotate: 5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-green-500/30 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                  </motion.button>
+                  
+                  <motion.button
+                    whileHover={{ scale: 1.2, rotate: -5 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-8 h-8 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-green-500/30 transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </motion.button>
+                </motion.div>
+
+                {/* Glow Effect on Hover */}
+                <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-t ${member.gradient} blur-3xl -z-10`} />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Bottom CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="mt-20 text-center"
+        >
+          <div className="bg-gradient-to-r from-gray-900/50 to-black/50 backdrop-blur-sm border border-green-500/20 rounded-3xl p-12">
+            <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+              Want to Join Our Team?
+            </h3>
+            <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
+              We&apos;re always looking for passionate ECE students to join Pulse and make a difference
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-black font-bold rounded-full hover:from-green-400 hover:to-emerald-500 transition-all duration-300 shadow-lg shadow-green-500/30"
+            >
+              Apply Now
+            </motion.button>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };

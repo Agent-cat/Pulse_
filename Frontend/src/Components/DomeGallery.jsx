@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useCallback } from "react";
 import { useGesture } from "@use-gesture/react";
+import PropTypes from "prop-types";
 
 const DEFAULT_IMAGES = [
   {
@@ -158,6 +159,11 @@ export default function DomeGallery({
   const openingRef = useRef(false);
   const openStartedAtRef = useRef(0);
   const lastDragEndAt = useRef(0);
+  
+  // Auto-rotation state
+  const autoRotateRAF = useRef(null);
+  const autoRotateEnabled = useRef(true);
+  const lastAutoRotateTime = useRef(0);
 
   const scrollLockedRef = useRef(false);
   const lockScroll = useCallback(() => {
@@ -177,10 +183,16 @@ export default function DomeGallery({
   const applyTransform = (xDeg, yDeg) => {
     const el = sphereRef.current;
     if (el) {
-      el.style.transform = `translateZ(calc(var(--radius) * -1)) rotateX(${xDeg}deg) rotateY(${yDeg}deg)`;
+      // Use requestAnimationFrame for smoother updates
+      requestAnimationFrame(() => {
+        if (el) {
+          el.style.transform = `translateZ(calc(var(--radius) * -1)) rotateX(${xDeg}deg) rotateY(${yDeg}deg)`;
+        }
+      });
     }
   };
 
+  const lastUpdateRef = useRef(0);
   const lockedRadiusRef = useRef(null);
 
   useEffect(() => {
@@ -283,6 +295,47 @@ export default function DomeGallery({
     }
   }, []);
 
+  // Auto-rotation functions
+  const stopAutoRotate = useCallback(() => {
+    if (autoRotateRAF.current) {
+      cancelAnimationFrame(autoRotateRAF.current);
+      autoRotateRAF.current = null;
+    }
+    autoRotateEnabled.current = false;
+  }, []);
+
+  const startAutoRotate = useCallback(() => {
+    // Don't start if already running or if image is focused
+    if (autoRotateRAF.current || focusedElRef.current) return;
+    
+    autoRotateEnabled.current = true;
+    lastAutoRotateTime.current = performance.now();
+    
+    const autoRotate = (currentTime) => {
+      if (!autoRotateEnabled.current || focusedElRef.current) {
+        autoRotateRAF.current = null;
+        return;
+      }
+      
+      // Clamp delta to avoid big jumps when tab resumes
+      const rawDelta = currentTime - lastAutoRotateTime.current;
+      const deltaTime = Math.min(rawDelta, 32); // cap at ~30fps step
+      lastAutoRotateTime.current = currentTime;
+      
+      // Slower, smoother rotation (~2.16 deg/s = ~166s per full rotation)
+      const rotationSpeed = 0.006; // deg per ms
+      const increment = rotationSpeed * deltaTime;
+      
+      const nextY = wrapAngleSigned(rotationRef.current.y + increment);
+      rotationRef.current = { x: rotationRef.current.x, y: nextY };
+      applyTransform(rotationRef.current.x, nextY);
+      
+      autoRotateRAF.current = requestAnimationFrame(autoRotate);
+    };
+    
+    autoRotateRAF.current = requestAnimationFrame(autoRotate);
+  }, []);
+
   const startInertia = useCallback(
     (vx, vy) => {
       const MAX_V = 1.4;
@@ -298,10 +351,22 @@ export default function DomeGallery({
         vY *= frictionMul;
         if (Math.abs(vX) < stopThreshold && Math.abs(vY) < stopThreshold) {
           inertiaRAF.current = null;
+          // Resume auto-rotation after inertia stops using timeout to avoid dependency issues
+          setTimeout(() => {
+            if (!focusedElRef.current && !draggingRef.current) {
+              startAutoRotate();
+            }
+          }, 0);
           return;
         }
         if (++frames > maxFrames) {
           inertiaRAF.current = null;
+          // Resume auto-rotation after inertia stops using timeout to avoid dependency issues
+          setTimeout(() => {
+            if (!focusedElRef.current && !draggingRef.current) {
+              startAutoRotate();
+            }
+          }, 0);
           return;
         }
         const nextX = clamp(
@@ -317,14 +382,37 @@ export default function DomeGallery({
       stopInertia();
       inertiaRAF.current = requestAnimationFrame(step);
     },
-    [dragDampening, maxVerticalRotationDeg, stopInertia]
+    [dragDampening, maxVerticalRotationDeg, stopInertia, startAutoRotate]
   );
+
+  // Start auto-rotation on mount
+  useEffect(() => {
+    startAutoRotate();
+    return () => {
+      stopAutoRotate();
+    };
+  }, [startAutoRotate, stopAutoRotate]);
+
+  // Pause auto-rotation when tab is hidden to reduce jank and resume smoothly
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.hidden) {
+        stopAutoRotate();
+      } else if (!draggingRef.current && !focusedElRef.current) {
+        // Small timeout to allow layout to stabilize before resuming
+        setTimeout(() => startAutoRotate(), 50);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, [startAutoRotate, stopAutoRotate]);
 
   useGesture(
     {
       onDragStart: ({ event }) => {
         if (focusedElRef.current) return;
         stopInertia();
+        stopAutoRotate(); // Stop auto-rotation when user interacts
 
         pointerTypeRef.current = event.pointerType || "mouse";
         if (pointerTypeRef.current === "touch") event.preventDefault();
@@ -361,17 +449,25 @@ export default function DomeGallery({
           if (dist2 > 16) movedRef.current = true;
         }
 
-        const nextX = clamp(
-          startRotRef.current.x - dyTotal / dragSensitivity,
-          -maxVerticalRotationDeg,
-          maxVerticalRotationDeg
-        );
-        const nextY = startRotRef.current.y + dxTotal / dragSensitivity;
+        // Use RAF-based throttling for ultra-smooth 60fps updates
+        const now = performance.now();
+        const shouldUpdate = last || (now - lastUpdateRef.current) >= 16; // 60fps for smoothness
 
-        const cur = rotationRef.current;
-        if (cur.x !== nextX || cur.y !== nextY) {
-          rotationRef.current = { x: nextX, y: nextY };
-          applyTransform(nextX, nextY);
+        if (shouldUpdate) {
+          lastUpdateRef.current = now;
+          
+          const nextX = clamp(
+            startRotRef.current.x - dyTotal / dragSensitivity,
+            -maxVerticalRotationDeg,
+            maxVerticalRotationDeg
+          );
+          const nextY = startRotRef.current.y + dxTotal / dragSensitivity;
+
+          const cur = rotationRef.current;
+          if (cur.x !== nextX || cur.y !== nextY) {
+            rotationRef.current = { x: nextX, y: nextY };
+            applyTransform(nextX, nextY);
+          }
         }
 
         if (last) {
@@ -423,7 +519,11 @@ export default function DomeGallery({
         }
       },
     },
-    { target: mainRef, eventOptions: { passive: false } }
+    { 
+      target: mainRef, 
+      eventOptions: { passive: false }, 
+      drag: { filterTaps: true, threshold: 5 } 
+    }
   );
 
   useEffect(() => {
@@ -726,17 +826,22 @@ export default function DomeGallery({
       margin: auto;
       perspective: calc(var(--radius) * 2);
       perspective-origin: 50% 50%;
+      contain: layout style;
     }
     
     .sphere {
       transform: translateZ(calc(var(--radius) * -1));
       will-change: transform;
       position: absolute;
+      /* Avoid paint containment here to prevent clipping of 3D children */
+      /* contain: layout style; */
     }
     
     .sphere-item {
       width: calc(var(--item-width) * var(--item-size-x));
       height: calc(var(--item-height) * var(--item-size-y));
+      min-width: 120px;
+      min-height: 120px;
       position: absolute;
       top: -999px;
       bottom: -999px;
@@ -745,7 +850,9 @@ export default function DomeGallery({
       margin: auto;
       transform-origin: 50% 50%;
       backface-visibility: hidden;
-      transition: transform 300ms;
+      transition: transform 200ms;
+      will-change: transform;
+      contain: layout style;
       transform: rotateY(calc(var(--rot-y) * (var(--offset-x) + ((var(--item-size-x) - 1) / 2)) + var(--rot-y-delta, 0deg))) 
                  rotateX(calc(var(--rot-x) * (var(--offset-y) - ((var(--item-size-y) - 1) / 2)) + var(--rot-x-delta, 0deg))) 
                  translateZ(var(--radius));
@@ -781,10 +888,12 @@ export default function DomeGallery({
       cursor: pointer;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      transition: transform 300ms;
+      transition: transform 200ms;
       pointer-events: auto;
       -webkit-transform: translateZ(0);
       transform: translateZ(0);
+      will-change: transform;
+      contain: layout style paint;
     }
     .item__image--reference {
       position: absolute;
@@ -890,20 +999,21 @@ export default function DomeGallery({
             style={{
               WebkitMaskImage: `radial-gradient(rgba(235, 235, 235, 0) 70%, var(--overlay-blur-color, ${overlayBlurColor}) 90%)`,
               maskImage: `radial-gradient(rgba(235, 235, 235, 0) 70%, var(--overlay-blur-color, ${overlayBlurColor}) 90%)`,
-              backdropFilter: "blur(3px)",
             }}
           />
 
           <div
-            className="absolute left-0 right-0 top-0 h-[120px] z-[5] pointer-events-none rotate-180"
+            className="fixed left-0 right-0 top-0 h-[120px] z-[5] pointer-events-none rotate-180 will-change-transform"
             style={{
               background: `linear-gradient(to bottom, transparent, var(--overlay-blur-color, ${overlayBlurColor}))`,
+              transform: 'translateZ(0)',
             }}
           />
           <div
-            className="absolute left-0 right-0 bottom-0 h-[120px] z-[5] pointer-events-none"
+            className="fixed left-0 right-0 bottom-0 h-[120px] z-[5] pointer-events-none will-change-transform"
             style={{
               background: `linear-gradient(to bottom, transparent, var(--overlay-blur-color, ${overlayBlurColor}))`,
+              transform: 'translateZ(0)',
             }}
           />
 
@@ -916,8 +1026,7 @@ export default function DomeGallery({
               ref={scrimRef}
               className="scrim absolute inset-0 z-10 pointer-events-none opacity-0 transition-opacity duration-500"
               style={{
-                background: "rgba(0, 0, 0, 0.4)",
-                backdropFilter: "blur(3px)",
+                background: "rgba(0, 0, 0, 0.7)",
               }}
             />
             <div
@@ -933,3 +1042,31 @@ export default function DomeGallery({
     </>
   );
 }
+
+DomeGallery.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        src: PropTypes.string,
+        alt: PropTypes.string,
+      }),
+    ])
+  ),
+  fit: PropTypes.number,
+  fitBasis: PropTypes.oneOf(["auto", "min", "max", "width", "height"]),
+  minRadius: PropTypes.number,
+  maxRadius: PropTypes.number,
+  padFactor: PropTypes.number,
+  overlayBlurColor: PropTypes.string,
+  maxVerticalRotationDeg: PropTypes.number,
+  dragSensitivity: PropTypes.number,
+  enlargeTransitionMs: PropTypes.number,
+  segments: PropTypes.number,
+  dragDampening: PropTypes.number,
+  openedImageWidth: PropTypes.string,
+  openedImageHeight: PropTypes.string,
+  imageBorderRadius: PropTypes.string,
+  openedImageBorderRadius: PropTypes.string,
+  grayscale: PropTypes.bool,
+};
