@@ -37,7 +37,7 @@ const Alumini = () => {
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            2022
+            2023
           </button>
           <button
             onClick={() => setActiveYear("2023")}
@@ -47,7 +47,7 @@ const Alumini = () => {
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            2023
+            2024
           </button>
           <button
             onClick={() => setActiveYear("2024")}
@@ -57,7 +57,7 @@ const Alumini = () => {
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            2024
+            2025
           </button>
         </div>
 

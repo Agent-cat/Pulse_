@@ -10,7 +10,7 @@ const Home = () => {
   const clubs = [
     {
       name: "VLSI Design",
-      image: "/src/assets/demoClub.png",
+      image: "/src/assets/vlsi.jpeg",
       description: "Mastering chip design, digital circuits, and semiconductor technology",
       icon: "�",
       upcomingEvent: "VLSI Workshop - Dec 15",
@@ -19,7 +19,7 @@ const Home = () => {
     },
     {
       name: "Embedded Systems",
-      image: "/src/assets/demoClub.png",
+      image: "/img/assets/demoClub.png",
       description: "Building IoT devices, microcontrollers, and real-time systems",
       icon: "📡",
       upcomingEvent: "IoT Hackathon - Dec 20",
@@ -783,7 +783,7 @@ const Home = () => {
             </motion.div>
             <div className="relative overflow-hidden rounded-2xl shadow-2xl shadow-teal-500/20 border border-teal-500/20 md:order-2 group">
               <LazyImage
-                src="/img/home4.webp"
+                src="/img/pro.JPG"
                 alt="Pulse Club Building"
                 className="transition-transform duration-300 group-hover:scale-105"
                 wrapperClassName="h-[500px]"

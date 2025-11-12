@@ -7,9 +7,16 @@ const Team = () => {
 
   const teamMembers = [
     { 
-      name: "COMMING SOON", 
-      role: "President",
-      image: "/img/pngegg.png", 
+      name: "R HARIHARAN", 
+      role: "PULSE ADSISOR",
+      image: "/img/HARI.jpeg", 
+      gradient: "from-purple-500 to-pink-500",
+      description: "Leading Pulse with vision and innovation"
+    },
+    { 
+       name: "P KAMAL", 
+      role: "PRESIDENT",
+      image: "/img/kamal12.jpeg", 
       gradient: "from-purple-500 to-pink-500",
       description: "Leading Pulse with vision and innovation"
     },
@@ -22,15 +29,22 @@ const Team = () => {
     },
     { 
       name: "JYOSHNA K", 
-      role: "Vice President", 
+      role: "Vice President & TESURER", 
       image: "/img/pulse team/vice - president/jyo.JPG",
       gradient: "from-green-500 to-emerald-500",
       description: "Managing technical workshops and projects"
     },
-    { 
-      name: "KAMAL", 
-      role: "TESURER", 
-      image: "/img/pulse team/teasurer/DSC00295.JPG",
+     { 
+      name: "G JAYA KRISHNA", 
+      role: "LOGISTICS HEAD", 
+      image: "/img/pulse team/teQasurer/DSC00295.JPG",
+      gradient: "from-orange-500 to-red-500",
+      description: "Organizing hackathons and competitions"
+    },
+     { 
+      name: "SRI VATSAV", 
+      role: "LOGISTICS HEAD", 
+      image: "/img/sri.jpeg",
       gradient: "from-orange-500 to-red-500",
       description: "Organizing hackathons and competitions"
     },
@@ -52,14 +66,14 @@ const Team = () => {
     { 
       name: " SIVESH", 
       role: "TECHNICAL HEAD", 
-      image: "/img/pulse team/technical head/siv.JPG",
+      image: "/img/SIVESH.jpeg",
       gradient: "from-teal-500 to-green-500",
       description: "Conducting technical training sessions"
     },
     { 
       name: " GOKUL", 
       role: "TECHNICAL HEAD", 
-      image: "/img/pulse team/technical/DSC00109.JPG",
+      image: "img/go.JPG",
       gradient: "from-yellow-500 to-orange-500",
       description: "Securing partnerships and funding"
     },
@@ -79,7 +93,7 @@ const Team = () => {
       { 
       name: "JEEVAN ", 
       role: "DESIGNING HEAD", 
-      image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
+      image: "/img/JEEVAN.jpg",
       gradient: "from-teal-500 to-green-500",
       description: "Conducting technical training sessions"
     },
@@ -108,7 +122,7 @@ const Team = () => {
       name: " RAMYA", 
       role: "STAGE MANAGEMENT HEAD", 
       image: "https://ik.imagekit.io/gopichakradhar/luffy/o4.jpeg?updatedAt=1754289569398",
-      gradient: "from-teal-500 to-green-500",
+     
       description: "Conducting technical training sessions"
     },
       { 
@@ -132,7 +146,7 @@ const Team = () => {
     },
       { 
       name: "BALAJI", 
-      role: "CULTURALS HEAD", 
+      role: "NON TECHNICAL HEAD", 
       image: "/img/pulse team/culturals/DSC00063.JPG",
       description: "Conducting technical training sessions"
     },
@@ -147,6 +161,13 @@ const Team = () => {
       name: " SONY SRI", 
       role: "BLOOD BANK HEAD", 
       image: "/img/pulse team/drafting/DSC00218.JPG",
+      gradient: "from-teal-500 to-green-500",
+      description: "Conducting technical training sessions"
+    },
+     { 
+      name: "SASI", 
+      role: "HR INFO HEAD",
+      image: "/img/SASI.JPG", 
       gradient: "from-teal-500 to-green-500",
       description: "Conducting technical training sessions"
     },
